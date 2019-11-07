@@ -1,0 +1,52 @@
+EESchema Schematic File Version 4
+LIBS:PCB_CR2032-cache
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 4 7
+Title "BCD Watch"
+Date "2019-11-06"
+Rev "0.1"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Switch:SW_Push SW?
+U 1 1 5DD51027
+P 4500 3000
+AR Path="/5DD51027" Ref="SW?"  Part="1" 
+AR Path="/5DD502F6/5DD51027" Ref="SW1"  Part="1" 
+F 0 "SW1" H 4500 3285 50  0000 C CNN
+F 1 "WAKE" H 4500 3194 50  0000 C CNN
+F 2 "BCD-watch:WS-TASU SMT Tact Switch" H 4500 3200 50  0001 C CNN
+F 3 "~" H 4500 3200 50  0001 C CNN
+F 4 "Wurth" H 4500 3000 50  0001 C CNN "Make"
+F 5 "434331045822" H 4500 3000 50  0001 C CNN "Part"
+F 6 "710-434331045822" H 4500 3000 50  0001 C CNN "Mouser"
+	1    4500 3000
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VDD #PWR021
+U 1 1 5DD51489
+P 4200 2900
+F 0 "#PWR021" H 4200 2750 50  0001 C CNN
+F 1 "VDD" H 4217 3073 50  0000 C CNN
+F 2 "" H 4200 2900 50  0001 C CNN
+F 3 "" H 4200 2900 50  0001 C CNN
+	1    4200 2900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4200 2900 4200 3000
+Wire Wire Line
+	4200 3000 4300 3000
+Text HLabel 4800 3000 2    50   Output ~ 0
+WAKE_UP
+Wire Wire Line
+	4800 3000 4700 3000
+$EndSCHEMATC
