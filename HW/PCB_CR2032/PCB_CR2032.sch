@@ -6,8 +6,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 7
 Title "BCD Watch"
-Date "2019-11-08"
-Rev "0.3"
+Date "2019-11-10"
+Rev "1.0"
 Comp ""
 Comment1 ""
 Comment2 ""

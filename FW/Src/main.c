@@ -48,6 +48,7 @@ RTC_HandleTypeDef hrtc;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim21;
 
 UART_HandleTypeDef huart1;
 
@@ -63,6 +64,7 @@ static void MX_TIM2_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_TIM21_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -106,6 +108,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C1_Init();
   MX_TIM3_Init();
+  MX_TIM21_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -306,10 +309,6 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIMEx_RemapConfig(&htim2, TIM3_TI1_GPIO) != HAL_OK)
-  {
-    Error_Handler();
-  }
   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
   {
     Error_Handler();
@@ -343,7 +342,6 @@ static void MX_TIM3_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM3_Init 1 */
 
@@ -363,13 +361,49 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
+  * @brief TIM21 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM21_Init(void)
+{
+
+  /* USER CODE BEGIN TIM21_Init 0 */
+
+  /* USER CODE END TIM21_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM21_Init 1 */
+
+  /* USER CODE END TIM21_Init 1 */
+  htim21.Instance = TIM21;
+  htim21.Init.Prescaler = 0;
+  htim21.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim21.Init.Period = 0;
+  htim21.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim21.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_PWM_Init(&htim21) != HAL_OK)
   {
     Error_Handler();
   }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim21, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -377,22 +411,18 @@ static void MX_TIM3_Init(void)
   sConfigOC.Pulse = 0;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  if (HAL_TIM_PWM_ConfigChannel(&htim21, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
-  if (HAL_TIMEx_RemapConfig(&htim3, TIM3_TI1_GPIO) != HAL_OK)
+  if (HAL_TIM_PWM_ConfigChannel(&htim21, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
   {
     Error_Handler();
   }
-  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM3_Init 2 */
+  /* USER CODE BEGIN TIM21_Init 2 */
 
-  /* USER CODE END TIM3_Init 2 */
-  HAL_TIM_MspPostInit(&htim3);
+  /* USER CODE END TIM21_Init 2 */
+  HAL_TIM_MspPostInit(&htim21);
 
 }
 
@@ -447,42 +477,42 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOH, LED_H_12_Pin|LED_H_13_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOH, LED_M_02_Pin|LED_M_03_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED_H_10_Pin|LED_H_11_Pin|LED_S_00_Pin|LED_S_01_Pin 
-                          |LED_S_02_Pin|LED_S_03_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED_M_12_Pin|LED_M_13_Pin|LED_S_13_Pin|LED_S_03_Pin 
+                          |LED_S_12_Pin|LED_S_02_Pin|LED_M_00_Pin|LED_H_01_Pin 
+                          |LED_H_00_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_S_10_Pin|LED_S_11_Pin|LED_S_12_Pin|LED_M_02_Pin 
-                          |LED_M_03_Pin|LED_H_00_Pin|LED_H_01_Pin|LED_H_02_Pin 
-                          |LED_H_03_Pin|LED_M_10_Pin|LED_M_11_Pin|LED_M_12_Pin 
-                          |LED_M_00_Pin|LED_M_01_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_S_11_Pin|LED_S_01_Pin|LED_S_10_Pin|LED_S_00_Pin 
+                          |LED_M_11_Pin|LED_M_10_Pin|LED_M_01_Pin|LED_H_10_Pin 
+                          |LED_H_11_Pin|LED_H_02_Pin|LED_H_03_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : LED_H_12_Pin LED_H_13_Pin */
-  GPIO_InitStruct.Pin = LED_H_12_Pin|LED_H_13_Pin;
+  /*Configure GPIO pins : LED_M_02_Pin LED_M_03_Pin */
+  GPIO_InitStruct.Pin = LED_M_02_Pin|LED_M_03_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_H_10_Pin LED_H_11_Pin LED_S_00_Pin LED_S_01_Pin 
-                           LED_S_02_Pin LED_S_03_Pin */
-  GPIO_InitStruct.Pin = LED_H_10_Pin|LED_H_11_Pin|LED_S_00_Pin|LED_S_01_Pin 
-                          |LED_S_02_Pin|LED_S_03_Pin;
+  /*Configure GPIO pins : LED_M_12_Pin LED_M_13_Pin LED_S_13_Pin LED_S_03_Pin 
+                           LED_S_12_Pin LED_S_02_Pin LED_M_00_Pin LED_H_01_Pin 
+                           LED_H_00_Pin */
+  GPIO_InitStruct.Pin = LED_M_12_Pin|LED_M_13_Pin|LED_S_13_Pin|LED_S_03_Pin 
+                          |LED_S_12_Pin|LED_S_02_Pin|LED_M_00_Pin|LED_H_01_Pin 
+                          |LED_H_00_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_S_10_Pin LED_S_11_Pin LED_S_12_Pin LED_M_02_Pin 
-                           LED_M_03_Pin LED_H_00_Pin LED_H_01_Pin LED_H_02_Pin 
-                           LED_H_03_Pin LED_M_10_Pin LED_M_11_Pin LED_M_12_Pin 
-                           LED_M_00_Pin LED_M_01_Pin */
-  GPIO_InitStruct.Pin = LED_S_10_Pin|LED_S_11_Pin|LED_S_12_Pin|LED_M_02_Pin 
-                          |LED_M_03_Pin|LED_H_00_Pin|LED_H_01_Pin|LED_H_02_Pin 
-                          |LED_H_03_Pin|LED_M_10_Pin|LED_M_11_Pin|LED_M_12_Pin 
-                          |LED_M_00_Pin|LED_M_01_Pin;
+  /*Configure GPIO pins : LED_S_11_Pin LED_S_01_Pin LED_S_10_Pin LED_S_00_Pin 
+                           LED_M_11_Pin LED_M_10_Pin LED_M_01_Pin LED_H_10_Pin 
+                           LED_H_11_Pin LED_H_02_Pin LED_H_03_Pin */
+  GPIO_InitStruct.Pin = LED_S_11_Pin|LED_S_01_Pin|LED_S_10_Pin|LED_S_00_Pin 
+                          |LED_M_11_Pin|LED_M_10_Pin|LED_M_01_Pin|LED_H_10_Pin 
+                          |LED_H_11_Pin|LED_H_02_Pin|LED_H_03_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

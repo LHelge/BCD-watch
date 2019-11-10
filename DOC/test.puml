@@ -1,0 +1,24 @@
+@startuml
+
+[*] --> Init
+Init --> ShowTime: InitDone
+ShowTime -> SetTime: ButtonLongPress
+SetTime -> ShowTime: ButtonLongPress
+ShowTime --> Sleep : Timeout
+Sleep --> Init: AccelerometerInterrupt
+Sleep --> Init: ButtonPress
+
+Init: Setup peripherals
+Init: Setup Acceleromenter
+
+state ShowTime {
+    [*] --> ReadRTC
+
+}
+
+state SetTime {
+    [*] --> ShowCurrentTime
+
+}
+
+@enduml
