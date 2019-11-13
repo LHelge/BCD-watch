@@ -18,7 +18,7 @@ Text HLabel 5050 3750 0    50   Input ~ 0
 SCL
 Text HLabel 5050 3650 0    50   BiDi ~ 0
 SDA
-Text HLabel 3800 3400 0    50   Output ~ 0
+Text HLabel 5050 3350 0    50   Output ~ 0
 WAKE_UP
 $Comp
 L power:VDD #PWR028
@@ -184,42 +184,11 @@ Wire Wire Line
 	5150 3850 5250 3850
 Wire Wire Line
 	5750 4250 5750 4150
-Wire Wire Line
-	5250 3450 4700 3450
-Wire Wire Line
-	5250 3350 4700 3350
-$Comp
-L Device:D_Schottky_x2_KCom_AAK D?
-U 1 1 5DCAA080
-P 4100 3400
-AR Path="/5DC4948F/5DCAA080" Ref="D?"  Part="1" 
-AR Path="/5DC486A4/5DCAA080" Ref="D3"  Part="1" 
-F 0 "D3" V 4146 3479 50  0000 L CNN
-F 1 "BAR43CFILM" V 4055 3479 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:SOT-23_Handsoldering" H 4100 3400 50  0001 C CNN
-F 3 "~" H 4100 3400 50  0001 C CNN
-F 4 "ST" H 4100 3400 50  0001 C CNN "Make"
-F 5 "511-BAR43CFILM" H 4100 3400 50  0001 C CNN "Mouser"
-F 6 "BAR43CFILM" H 4100 3400 50  0001 C CNN "Part"
-	1    4100 3400
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	3800 3400 3900 3400
-Wire Wire Line
-	4100 3100 4100 3000
-Wire Wire Line
-	4100 3000 4700 3000
-Wire Wire Line
-	4700 3000 4700 3350
-Wire Wire Line
-	4100 3700 4100 3800
-Wire Wire Line
-	4100 3800 4700 3800
-Wire Wire Line
-	4700 3450 4700 3800
 NoConn ~ 6250 3450
 NoConn ~ 6250 3550
 NoConn ~ 6250 3650
 NoConn ~ 5250 3550
+Wire Wire Line
+	5250 3350 5050 3350
+NoConn ~ 5250 3450
 $EndSCHEMATC
