@@ -1,0 +1,5 @@
+BCDW_C_SRC = 
+
+BCDW_CPP_SRC = BCDw/BCDw.cpp
+
+BCDW_INC = BCDw
