@@ -45,8 +45,8 @@ Wire Wire Line
 	4200 2900 4200 3000
 Wire Wire Line
 	4200 3000 4300 3000
-Text HLabel 4800 3000 2    50   Output ~ 0
-WAKE_UP
 Wire Wire Line
 	4800 3000 4700 3000
+Text HLabel 4800 3000 2    50   Output ~ 0
+WAKE_UP
 $EndSCHEMATC
