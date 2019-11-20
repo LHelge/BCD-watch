@@ -390,7 +390,6 @@ Wire Wire Line
 	9850 1750 9850 1650
 Wire Wire Line
 	9850 1350 9850 1250
-NoConn ~ 4850 2400
 Text HLabel 4750 3600 0    50   Output ~ 0
 LED_H_1_DIM
 Text HLabel 6250 4800 2    50   Output ~ 0
@@ -730,4 +729,17 @@ Wire Wire Line
 Connection ~ 4150 4000
 Wire Wire Line
 	4150 4000 4850 4000
+$Comp
+L power:GND #PWR0104
+U 1 1 5DD61BE4
+P 4750 2400
+F 0 "#PWR0104" H 4750 2150 50  0001 C CNN
+F 1 "GND" H 4755 2227 50  0000 C CNN
+F 2 "" H 4750 2400 50  0001 C CNN
+F 3 "" H 4750 2400 50  0001 C CNN
+	1    4750 2400
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4850 2400 4750 2400
 $EndSCHEMATC
