@@ -1,5 +1,5 @@
-#ifndef _BCDW_H
-#define _BCDW_H
+#ifndef _BCDW_HPP
+#define _BCDW_HPP
 
 
 #ifdef __cplusplus

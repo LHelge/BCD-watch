@@ -45,7 +45,6 @@ include BCDw/BCDw.mk
 # C sources
 C_SOURCES =  \
 Src/main.c \
-Src/gpio.c \
 Src/i2c.c \
 Src/rtc.c \
 Src/tim.c \
@@ -76,7 +75,10 @@ $(BCDW_C_SRC) \
 
 
 CPP_SOURCES = \
-$(BCDW_CPP_SRC)
+BCDw/BCDw.cpp \
+BCDw/HAL/gpio.cpp
+#CPP_SOURCES = \
+#$(BCDW_CPP_SRC)
 
 # ASM sources
 ASM_SOURCES =  \
@@ -141,7 +143,7 @@ C_INCLUDES =  \
 -IDrivers/STM32L0xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32L0xx/Include \
 -IDrivers/CMSIS/Include \
--I$(addprefix , $(BCDW_INC))
+$(addprefix -I, $(BCDW_INC))
 
 
 CPP_INCLUDES = $(C_INCLUDES)
@@ -160,7 +162,7 @@ endif
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
-CPPFLAGS = $(CFLAGS) -std=c++11
+CPPFLAGS = $(CFLAGS) -std=c++11 -fno-rtti -fno-exceptions -fno-threadsafe-statics
 
 
 #######################################

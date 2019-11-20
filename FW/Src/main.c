@@ -24,11 +24,10 @@
 #include "rtc.h"
 #include "tim.h"
 #include "usart.h"
-#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "BCDw.h"
+#include "BCDw.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,24 +90,26 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_RTC_Init();
-  MX_TIM2_Init();
-  MX_USART1_UART_Init();
-  MX_I2C1_Init();
-  MX_TIM3_Init();
-  MX_TIM21_Init();
+  //MX_GPIO_Init();
+  //MX_RTC_Init();
+  //MX_TIM2_Init();
+  //MX_USART1_UART_Init();
+  //MX_I2C1_Init();
+  //MX_TIM3_Init();
+  //MX_TIM21_Init();
   /* USER CODE BEGIN 2 */
   bcdw_run();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    
   }
   /* USER CODE END 3 */
 }
