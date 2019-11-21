@@ -47,7 +47,6 @@ C_SOURCES =  \
 Src/main.c \
 Src/i2c.c \
 Src/rtc.c \
-Src/usart.c \
 Src/stm32l0xx_it.c \
 Src/stm32l0xx_hal_msp.c \
 Src/system_stm32l0xx.c \

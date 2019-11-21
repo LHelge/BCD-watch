@@ -3,6 +3,7 @@
 #include "timer.hpp"
 #include "stm32l0xx_hal.h"
 #include "main.h"
+#include "uart.hpp"
 
 class BCDw {
     public:
@@ -33,8 +34,8 @@ void BCDw::run(void) {
     GPIO::Output LED_S_10(GPIO::B,  2, true);
     GPIO::Output LED_H_10(GPIO::B,  4, true);
     GPIO::Output LED_H_11(GPIO::B,  5, true);
-    GPIO::Output LED_H_12(GPIO::B,  6, true);
-    GPIO::Output LED_H_13(GPIO::B,  7, true);
+    //GPIO::Output LED_H_12(GPIO::B,  6, true);
+    //GPIO::Output LED_H_13(GPIO::B,  7, true);
     GPIO::Output LED_H_02(GPIO::B,  8, true);
     GPIO::Output LED_H_03(GPIO::B,  9, true);
     GPIO::Output LED_S_00(GPIO::B, 10, true);
@@ -60,7 +61,13 @@ void BCDw::run(void) {
     Timer::PWM PWM_M_0(&Timer21, Timer::CHANNEL_1, &LED_M_0_Dim);
     Timer::PWM PWM_M_1(&Timer21, Timer::CHANNEL_2, &LED_M_1_Dim);
     Timer::PWM PWM_H_0(&Timer2, Timer::CHANNEL_1, &LED_H_0_Dim);
-    Timer::PWM PWM_H_1(&Timer2, Timer::CHANNEL_2, &LED_H_1_Dim);
+    //Timer::PWM PWM_H_1(&Timer2, Timer::CHANNEL_2, &LED_H_1_Dim);
+
+
+    GPIO::Alternate DebugTx(GPIO::B, 6, true, 0);
+    GPIO::Alternate DebugRx(GPIO::B, 7, true, 0);
+    UART::SerialPort Debug(UART::UART1, 115200, &DebugTx, &DebugRx);
+
 
     LED_S_00.Set();
     LED_S_01.Set();
@@ -84,13 +91,14 @@ void BCDw::run(void) {
     LED_H_03.Set();
     LED_H_10.Set();
     LED_H_11.Set();
-    LED_H_12.Set();
-    LED_H_13.Set();
+    //LED_H_12.Set();
+    //LED_H_13.Set();
 
     while(1) {
-        HAL_Delay(50);
+        HAL_Delay(100);
         if(Button) {
-            dutycycle +=1;
+            dutycycle +=5;
+            Debug.Write("Hello World!\r\n");
         }
 
         PWM_S_0.SetDutyCycle(dutycycle);
@@ -98,7 +106,7 @@ void BCDw::run(void) {
         PWM_M_0.SetDutyCycle(dutycycle+84);
         PWM_M_1.SetDutyCycle(dutycycle+126);
         PWM_H_0.SetDutyCycle(dutycycle+168);
-        PWM_H_1.SetDutyCycle(dutycycle+252);
+        //PWM_H_1.SetDutyCycle(dutycycle+252);
     }
 }
 
