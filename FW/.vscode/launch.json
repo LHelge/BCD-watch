@@ -15,7 +15,8 @@
             "configFiles": [
                 "interface/stlink.cfg",
                 "target/stm32l0.cfg"
-            ]
+            ],
+            "svdFile": "STM32L0x1.svd"
         }
     ]
 }

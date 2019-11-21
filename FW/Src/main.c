@@ -22,7 +22,6 @@
 #include "main.h"
 #include "i2c.h"
 #include "rtc.h"
-#include "tim.h"
 #include "usart.h"
 
 /* Private includes ----------------------------------------------------------*/

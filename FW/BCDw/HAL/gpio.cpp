@@ -26,6 +26,10 @@ namespace GPIO
         }
     }
 
+    Pin::operator bool() const {
+        return this->GetState() == SET;
+    }
+
 
     Output::Output(const Port port, const uint8_t pin, const bool pushpull) : Pin(port, pin) {
         this->SetState(State::RESET);
@@ -54,6 +58,9 @@ namespace GPIO
         this->SetState(this->m_state == State::SET ? State::RESET : State::SET);
     }
 
+    State Output::GetState() const {
+        return this->m_state;
+    }
 
     void Output::SetState(const State state) {
         HAL_GPIO_WritePin(this->m_gpioPort, this->m_gpioPin, state == State::SET ? GPIO_PIN_SET : GPIO_PIN_RESET);
@@ -77,8 +84,12 @@ namespace GPIO
         return this->GetState() == State::SET;
     }
 
-    State Input::GetState() {
+    State Input::GetState() const {
         return HAL_GPIO_ReadPin(this->m_gpioPort, this->m_gpioPin) == GPIO_PIN_SET ? State::SET : State::RESET;
+    }
+
+    void Input::SetState(const State state) {
+        // Not relevant
     }
 
 
@@ -92,6 +103,14 @@ namespace GPIO
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = alternate;
         HAL_GPIO_Init(this->m_gpioPort, &GPIO_InitStruct);
+    }
+
+    State Alternate::GetState() const {
+        return RESET; // Not relevant
+    }
+
+    void Alternate::SetState(const State state) {
+        // Not relevant
     }
 
 } // namespace GPIO
