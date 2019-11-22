@@ -1,8 +1,10 @@
 #include "uart.hpp"
+#include <string.h>
 
 namespace UART {
 
     SerialPort::SerialPort(const Number number, const uint32_t baudrate, GPIO::Alternate *txPin, GPIO::Alternate *rxPin) {
+        memset(&this->m_handle, 0, sizeof(UART_HandleTypeDef));
 
         switch (number)
         {
@@ -18,6 +20,8 @@ namespace UART {
         // Not really needed, but good check that it's configured
         this->m_txPin = txPin;
         this->m_rxPin = rxPin;
+
+        
 
         this->m_handle.gState = HAL_UART_STATE_RESET;
         this->m_handle.Init.BaudRate = baudrate;
@@ -37,7 +41,8 @@ namespace UART {
 
     void SerialPort::Write(const char *s) {
         uint16_t len = 0;
-        while(*s++) len++;
+
+        while(s[len]) len++;
 
         HAL_UART_Transmit(&this->m_handle, (uint8_t *)s, len, 100);
     }

@@ -100,7 +100,7 @@ namespace GPIO
         GPIO_InitStruct.Pin = this->m_gpioPin;
         GPIO_InitStruct.Mode = pushpull ? GPIO_MODE_AF_PP : GPIO_MODE_AF_OD;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
-        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
         GPIO_InitStruct.Alternate = alternate;
         HAL_GPIO_Init(this->m_gpioPort, &GPIO_InitStruct);
     }
