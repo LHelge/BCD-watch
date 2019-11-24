@@ -4,8 +4,10 @@
 #include "stm32l0xx_hal.h"
 #include "main.h"
 #include "uart.hpp"
+#include "i2c.hpp"
+#include "Debug.hpp"
+#include "lis3dh.hpp"
 
-#define DEBUG_UART
 
 class BCDw {
     public:
@@ -20,6 +22,8 @@ void bcdw_run(void) {
 }
 
 void BCDw::run(void) {
+    Debug::Debug *debug;
+
     GPIO::Output LED_S_00(GPIO::B, 10, true);
     GPIO::Output LED_S_01(GPIO::B,  1, true);
     GPIO::Output LED_S_02(GPIO::A,  7, true);
@@ -42,7 +46,10 @@ void BCDw::run(void) {
     GPIO::Output LED_H_03(GPIO::B,  9, true);
     GPIO::Output LED_H_10(GPIO::B,  4, true);
     GPIO::Output LED_H_11(GPIO::B,  5, true);
-    #ifndef DEBUG_UART
+    #ifdef DEBUG
+    GPIO::Dummy LED_H_12();
+    GPIO::Dummy LED_H_13();
+    #else
     GPIO::Output LED_H_12(GPIO::B,  6, true);
     GPIO::Output LED_H_13(GPIO::B,  7, true);
     #endif
@@ -65,12 +72,26 @@ void BCDw::run(void) {
     Timer::PWM PWM_H_0(&Timer2, Timer::CHANNEL_1, &LED_H_0_Dim);
     Timer::PWM PWM_H_1(&Timer2, Timer::CHANNEL_2, &LED_H_1_Dim);
 
-    #ifdef DEBUG_UART
+    #ifdef DEBUG
     GPIO::Alternate DebugTx(GPIO::B, 6, true, 0);
     GPIO::Alternate DebugRx(GPIO::B, 7, true, 0);
-    UART::SerialPort Debug(UART::UART1, 115200, &DebugTx, &DebugRx);
+    UART::SerialPort DebugUart(UART::UART1, 115200, &DebugTx, &DebugRx);
+    Debug::SerialDebug SerialDebug(&DebugUart);
+    debug = &SerialDebug;
+    #else
+    Debug::Debug DummyDebug();
+    debug = &DummyDebug;
     #endif
 
+    GPIO::Alternate I2C1SCL(GPIO::A, 9, false, 6);
+    GPIO::Alternate I2C1SDA(GPIO::A, 10, false, 6);
+    I2C::I2CDevice AccI2C(I2C::I2C_1, Accelerometer::LIS3DH::getAddress(true), &I2C1SCL, &I2C1SDA);
+    Accelerometer::LIS3DH Accelerometer(&AccI2C);
+    Accelerometer.Init();
+    
+    if(Accelerometer.getState() == Accelerometer.Error) {
+        debug->WriteLine("Error: Accelerometer initialization error!");
+    }
 
     LED_S_00.Set();
     LED_S_11.Set();
@@ -79,8 +100,8 @@ void BCDw::run(void) {
     LED_H_00.Set();
     LED_H_10.Set();
     LED_H_11.Set();
-    // LED_H_12.Set();
-    // LED_H_13.Set();
+    //LED_H_12.Set();
+    //LED_H_13.Set();
 
     uint8_t dutycycle = 0x10;
     PWM_S_0.SetDutyCycle(dutycycle);
@@ -90,11 +111,24 @@ void BCDw::run(void) {
     PWM_H_0.SetDutyCycle(dutycycle);
     PWM_H_1.SetDutyCycle(0xFF);
 
+    Accelerometer::AccelerationVector AccVector;
+
     while(1) {
         if(Button) {
-            Debug.Write("Hello World!\r\n");
-            HAL_Delay(500);
+            debug->WriteLine("Hello World!");
         }
+
+        Accelerometer.getAcceleration(AccVector);
+
+        debug->Write("Acc x=");
+        debug->Write(AccVector.X);
+        debug->Write(", Y=");
+        debug->Write(AccVector.Y);
+        debug->Write(", Z=");
+        debug->Write(AccVector.Z);
+        debug->NewLine();
+
+        HAL_Delay(1000);
     }
 }
 

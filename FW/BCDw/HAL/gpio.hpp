@@ -7,7 +7,7 @@
 
 namespace GPIO
 {
-    enum Port {A, B, C, H};
+    enum Port {A, B, C, H, None};
     enum State {RESET = 0, SET = 1};
 
 
@@ -17,6 +17,10 @@ namespace GPIO
         Pin(const Port port, const uint8_t pin);
 
         operator bool() const;
+        void Set();
+        void Reset();
+        void Toggle();
+        bool IsSet();
 
     protected:
         virtual State GetState() const = 0;
@@ -29,10 +33,7 @@ namespace GPIO
     class Output : public Pin {
     public:
         Output(const Port port, const uint8_t pin, const bool pushpull);
-
-        void Set();
-        void Reset();
-        void Toggle();
+        
     protected:
         State GetState() const override;
         void SetState(const State state) override;
@@ -45,7 +46,6 @@ namespace GPIO
     public:
         Input(const Port port, const uint8_t pin);
 
-        bool IsSet();
     protected:
         State GetState() const override;
         void SetState(const State state) override;
@@ -60,6 +60,16 @@ namespace GPIO
         void SetState(const State state) override;
     };
 
+
+    class Dummy : public Pin {
+    public:
+        Dummy();
+    protected:
+        State GetState() const override;
+        void SetState(const State state) override;
+    private:
+        State m_state;
+    };
 } // namespace GPIO
 
 #endif

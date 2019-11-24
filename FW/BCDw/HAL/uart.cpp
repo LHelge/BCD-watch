@@ -47,5 +47,7 @@ namespace UART {
         HAL_UART_Transmit(&this->m_handle, (uint8_t *)s, len, 100);
     }
 
-
+    void SerialPort::Write(uint8_t *data, uint16_t len) {
+        HAL_UART_Transmit(&this->m_handle, data, len, 100);
+    }
 }

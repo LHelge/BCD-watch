@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/",
                 "${workspaceFolder}/BCDw",
+                "${workspaceFolder}/BCDw/Drivers",
                 "${workspaceFolder}/BCDw/HAL",
                 "${workspaceFolder}/Inc",
                 "${workspaceFolder}/Drivers/STM32L0xx_HAL_Driver/Inc",
@@ -439,6 +440,7 @@
                 "path": [
                     "${workspaceFolder}/",
                     "${workspaceFolder}/BCDw",
+                    "${workspaceFolder}/BCDw/Drivers",
                     "${workspaceFolder}/BCDw/HAL",
                     "${workspaceFolder}/Inc",
                     "${workspaceFolder}/Drivers/STM32L0xx_HAL_Driver/Inc",

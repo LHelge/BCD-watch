@@ -15,6 +15,7 @@ namespace UART {
         SerialPort(const Number number, const uint32_t baudrate, GPIO::Alternate *txPin, GPIO::Alternate *rxPin);
 
         void Write(const char *s);
+        void Write(uint8_t *data, uint16_t len);
     private:
         UART_HandleTypeDef m_handle;
         GPIO::Alternate *m_txPin;

@@ -22,6 +22,8 @@ namespace GPIO
             case Port::H: 
                 __HAL_RCC_GPIOH_CLK_ENABLE(); 
                 this ->m_gpioPort = GPIOH;
+            case Port::None:
+                this->m_gpioPort = nullptr;
                 break;
         }
     }
@@ -30,6 +32,22 @@ namespace GPIO
         return this->GetState() == SET;
     }
 
+    void Pin::Set() {
+        this->SetState(State::SET);
+    }
+
+
+    void Pin::Reset() {
+        this->SetState(State::RESET);
+    }
+
+    void Pin::Toggle() {
+        this->SetState(this->IsSet() ? State::RESET : State::SET);
+    }
+
+    bool Pin::IsSet() {
+        return this->GetState() == State::SET;
+    }
 
     Output::Output(const Port port, const uint8_t pin, const bool pushpull) : Pin(port, pin) {
         this->SetState(State::RESET);
@@ -42,21 +60,6 @@ namespace GPIO
         HAL_GPIO_Init(this->m_gpioPort, &GPIO_InitStruct);
     }
 
-
-    void Output::Set() {
-        this->SetState(State::SET);
-    }
-
-
-    void Output::Reset() {
-        this->SetState(State::RESET);
-    }
-
-
-
-    void Output::Toggle() {
-        this->SetState(this->m_state == State::SET ? State::RESET : State::SET);
-    }
 
     State Output::GetState() const {
         return this->m_state;
@@ -78,10 +81,6 @@ namespace GPIO
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         HAL_GPIO_Init(this->m_gpioPort, &GPIO_InitStruct);
-    }
-
-    bool Input::IsSet() {
-        return this->GetState() == State::SET;
     }
 
     State Input::GetState() const {
@@ -111,6 +110,19 @@ namespace GPIO
 
     void Alternate::SetState(const State state) {
         // Not relevant
+    }
+
+
+    Dummy::Dummy() : Pin(None, 0) {
+        this->m_state = RESET;
+    }
+
+    State Dummy::GetState() const {
+        return this->m_state;
+    }
+
+    void Dummy::SetState(const State state) {
+        this->m_state = state;
     }
 
 } // namespace GPIO

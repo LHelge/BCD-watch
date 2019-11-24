@@ -1,9 +1,13 @@
 BCDW_C_SRC = BCDw/hacks.c
 
 BCDW_CPP_SRC = BCDw/BCDw.cpp \
+			   BCDw/Debug.cpp \
 			   BCDw/HAL/gpio.cpp \
+			   BCDw/HAL/i2c.cpp \
 			   BCDw/HAL/timer.cpp \
-			   BCDw/HAL/uart.cpp 
+			   BCDw/HAL/uart.cpp \
+			   BCDw/Drivers/lis3dh.cpp 
 
 BCDW_INC = BCDw \
-           BCDw/HAL
+           BCDw/HAL \
+           BCDw/Drivers
