@@ -7,21 +7,29 @@
 #include "i2c.hpp"
 #include "Debug.hpp"
 #include "lis3dh.hpp"
-
+#include "rtc.hpp"
 
 class BCDw {
     public:
-        void run(void);
+        void Run(void);
+        void Tick(void);
+    private:
+        RealTimeClock::Clock m_clock;
 };
 
+static BCDw watch;
 
 
 void bcdw_run(void) {
-    static BCDw watch;    
-    watch.run();
+    
+    watch.Run();
 }
 
-void BCDw::run(void) {
+void bcdw_tick(void) {
+    watch.Tick();
+}
+
+void BCDw::Run(void) {
     Debug::Debug *debug;
 
     GPIO::Output LED_S_00(GPIO::B, 10, true);
@@ -112,10 +120,16 @@ void BCDw::run(void) {
     PWM_H_1.SetDutyCycle(0xFF);
 
     Accelerometer::AccelerationVector AccVector;
-
+    RealTimeClock::Time Time;
+    RealTimeClock::Date Date;
     while(1) {
         if(Button) {
-            debug->WriteLine("Hello World!");
+            this->m_clock.GetTime(Time);
+            this->m_clock.GetDate(Date);
+            debug->Write(Date);
+            debug->Write(" ");
+            debug->Write(Time);
+            debug->NewLine();
         }
 
         Accelerometer.getAcceleration(AccVector);
@@ -132,3 +146,6 @@ void BCDw::run(void) {
     }
 }
 
+void BCDw::Tick() {
+    this->m_clock.Tick();
+}

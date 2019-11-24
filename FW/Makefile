@@ -45,7 +45,6 @@ include BCDw/BCDw.mk
 # C sources
 C_SOURCES =  \
 Src/main.c \
-Src/rtc.c \
 Src/stm32l0xx_it.c \
 Src/stm32l0xx_hal_msp.c \
 Src/system_stm32l0xx.c \

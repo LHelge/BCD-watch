@@ -30,6 +30,14 @@ namespace Debug
         // Do nothing
     }
 
+    void Debug::Write(RealTimeClock::Time time) {
+        // Do nothing
+    }
+
+    void Debug::Write(RealTimeClock::Date date) {
+        // Do nothing
+    }
+
     void Debug::WriteLine(const char *line) {
         // Do nothing
     }
@@ -76,6 +84,34 @@ namespace Debug
         }
         this->Write((uint32_t)i);
     }
+
+
+    void SerialDebug::Write(RealTimeClock::Time time) {
+        uint8_t buf[8];
+
+        this->Write2Digit(time.H, &buf[0]);
+        buf[2] = ':';
+        this->Write2Digit(time.M, &buf[3]);
+        buf[5] = ':';
+        this->Write2Digit(time.S, &buf[6]);
+
+        this->m_port->Write(buf, 8);
+    }
+
+    void SerialDebug::Write(RealTimeClock::Date date) {
+        uint8_t buf[10];
+
+        buf[0] = '2';
+        buf[1] = '0';
+        this->Write2Digit(date.Y, &buf[2]);
+        buf[4] = '-';
+        this->Write2Digit(date.D, &buf[5]);
+        buf[7] = '-';
+        this->Write2Digit(date.M, &buf[8]);
+
+        this->m_port->Write(buf, 10);
+    }
+
     
     void SerialDebug::WriteLine(const char *line) {
         this->Write(line);
@@ -84,6 +120,12 @@ namespace Debug
 
     void SerialDebug::NewLine() {
         this->m_port->Write("\r\n");
+    }
+
+    void SerialDebug::Write2Digit(uint8_t i, uint8_t *buf) {
+        if(i > 99) i = 99;
+        buf[0] = '0' + i / 10;
+        buf[1] = '0' + i % 10;
     }
 
 

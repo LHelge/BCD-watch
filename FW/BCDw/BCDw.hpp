@@ -7,6 +7,7 @@ extern "C" {
 #endif
 
 void bcdw_run(void);
+void bcdw_tick(void);
 
 #ifdef __cplusplus
 }
