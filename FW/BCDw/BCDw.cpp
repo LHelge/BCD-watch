@@ -8,6 +8,7 @@
 #include "Debug.hpp"
 #include "lis3dh.hpp"
 #include "rtc.hpp"
+#include "display.hpp"
 
 class BCDw {
     public:
@@ -55,8 +56,8 @@ void BCDw::Run(void) {
     GPIO::Output LED_H_10(GPIO::B,  4, true);
     GPIO::Output LED_H_11(GPIO::B,  5, true);
     #ifdef DEBUG
-    GPIO::Dummy LED_H_12();
-    GPIO::Dummy LED_H_13();
+    GPIO::Dummy LED_H_12(GPIO::RESET);
+    GPIO::Dummy LED_H_13(GPIO::RESET);
     #else
     GPIO::Output LED_H_12(GPIO::B,  6, true);
     GPIO::Output LED_H_13(GPIO::B,  7, true);
@@ -71,15 +72,30 @@ void BCDw::Run(void) {
     GPIO::Alternate LED_H_0_Dim(GPIO::A, 15, false, 5);
     GPIO::Alternate LED_H_1_Dim(GPIO::B, 3, false, 2);
 
-    Timer::BaseTimer Timer2(Timer::TIMER2, 3);
-    Timer::BaseTimer Timer21(Timer::TIMER21, 3);
-    Timer::PWM PWM_S_0(&Timer2, Timer::CHANNEL_3, &LED_S_0_Dim);
-    Timer::PWM PWM_S_1(&Timer2, Timer::CHANNEL_4, &LED_S_1_Dim);
-    Timer::PWM PWM_M_0(&Timer21, Timer::CHANNEL_1, &LED_M_0_Dim);
-    Timer::PWM PWM_M_1(&Timer21, Timer::CHANNEL_2, &LED_M_1_Dim);
-    Timer::PWM PWM_H_0(&Timer2, Timer::CHANNEL_1, &LED_H_0_Dim);
-    Timer::PWM PWM_H_1(&Timer2, Timer::CHANNEL_2, &LED_H_1_Dim);
+    Timer::BaseTimer Timer2(Timer::TIMER2, 2);
+    Timer::BaseTimer Timer21(Timer::TIMER21, 2);
+    Timer::PWM PWM_S0(&Timer2, Timer::CHANNEL_3, &LED_S_0_Dim);
+    Timer::PWM PWM_S1(&Timer2, Timer::CHANNEL_4, &LED_S_1_Dim);
+    Timer::PWM PWM_M0(&Timer21, Timer::CHANNEL_1, &LED_M_0_Dim);
+    Timer::PWM PWM_M1(&Timer21, Timer::CHANNEL_2, &LED_M_1_Dim);
+    Timer::PWM PWM_H0(&Timer2, Timer::CHANNEL_1, &LED_H_0_Dim);
+    Timer::PWM PWM_H1(&Timer2, Timer::CHANNEL_2, &LED_H_1_Dim);
 
+    GPIO::Pin* LED_S0[] = {&LED_S_00, &LED_S_01, &LED_S_02, &LED_S_03};
+    GPIO::Pin* LED_S1[] = {&LED_S_10, &LED_S_11, &LED_S_12, &LED_S_13};
+    GPIO::Pin* LED_M0[] = {&LED_M_00, &LED_M_01, &LED_M_02, &LED_M_03};
+    GPIO::Pin* LED_M1[] = {&LED_M_10, &LED_M_11, &LED_M_12, &LED_M_13};
+    GPIO::Pin* LED_H0[] = {&LED_H_00, &LED_H_01, &LED_H_02, &LED_H_03};
+    GPIO::Pin* LED_H1[] = {&LED_H_10, &LED_H_11, &LED_H_12, &LED_H_13};
+    Display::LedDisplayColumn S0(Display::S0, LED_S0, &PWM_S0);
+    Display::LedDisplayColumn S1(Display::S1, LED_S1, &PWM_S1);
+    Display::LedDisplayColumn M0(Display::M0, LED_M0, &PWM_M0);
+    Display::LedDisplayColumn M1(Display::M1, LED_M1, &PWM_M1);
+    Display::LedDisplayColumn H0(Display::H0, LED_H0, &PWM_H0);
+    Display::LedDisplayColumn H1(Display::H1, LED_H1, &PWM_H1);
+    Display::LedDisplayColumn* Cols[] = {&S0, &S1, &M0, &M1, &H0, &H1};
+    Display::LedDisplay Display(Cols);
+    
     #ifdef DEBUG
     GPIO::Alternate DebugTx(GPIO::B, 6, true, 0);
     GPIO::Alternate DebugRx(GPIO::B, 7, true, 0);
@@ -87,7 +103,7 @@ void BCDw::Run(void) {
     Debug::SerialDebug SerialDebug(&DebugUart);
     debug = &SerialDebug;
     #else
-    Debug::Debug DummyDebug();
+    Debug::Debug DummyDebug;
     debug = &DummyDebug;
     #endif
 
@@ -101,48 +117,44 @@ void BCDw::Run(void) {
         debug->WriteLine("Error: Accelerometer initialization error!");
     }
 
-    LED_S_00.Set();
-    LED_S_11.Set();
-    LED_M_02.Set();
-    LED_M_13.Set();
-    LED_H_00.Set();
-    LED_H_10.Set();
-    LED_H_11.Set();
-    //LED_H_12.Set();
-    //LED_H_13.Set();
-
-    uint8_t dutycycle = 0x10;
-    PWM_S_0.SetDutyCycle(dutycycle);
-    PWM_S_1.SetDutyCycle(dutycycle);
-    PWM_M_0.SetDutyCycle(dutycycle);
-    PWM_M_1.SetDutyCycle(dutycycle);
-    PWM_H_0.SetDutyCycle(dutycycle);
-    PWM_H_1.SetDutyCycle(0xFF);
 
     Accelerometer::AccelerationVector AccVector;
     RealTimeClock::Time Time;
     RealTimeClock::Date Date;
+
+    uint32_t counter = 0;
     while(1) {
-        if(Button) {
+        if(counter++ == 50) {
+            counter = 0;
+
             this->m_clock.GetTime(Time);
             this->m_clock.GetDate(Date);
-            debug->Write(Date);
-            debug->Write(" ");
-            debug->Write(Time);
+            
+            if(Button) {
+                
+                debug->Write(Date);
+                debug->Write(" ");
+                debug->Write(Time);
+                debug->NewLine();
+            }
+
+            Accelerometer.getAcceleration(AccVector);
+
+            debug->Write("Acc x=");
+            debug->Write(AccVector.X);
+            debug->Write(", Y=");
+            debug->Write(AccVector.Y);
+            debug->Write(", Z=");
+            debug->Write(AccVector.Z);
             debug->NewLine();
+
+            Display.Set(Time);
         }
 
-        Accelerometer.getAcceleration(AccVector);
+        if(counter <= 5) Display.Dim(Display::ALL, 50 * counter);
+        else if( counter >= 45) Display.Dim(Display::ALL, 50 * (50 - counter));
 
-        debug->Write("Acc x=");
-        debug->Write(AccVector.X);
-        debug->Write(", Y=");
-        debug->Write(AccVector.Y);
-        debug->Write(", Z=");
-        debug->Write(AccVector.Z);
-        debug->NewLine();
-
-        HAL_Delay(1000);
+        HAL_Delay(20);
     }
 }
 

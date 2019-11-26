@@ -22,7 +22,7 @@ namespace Timer {
         this->m_handle.State = HAL_TIM_STATE_RESET;
         this->m_handle.Init.Prescaler = prescaler;
         this->m_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-        this->m_handle.Init.Period = 0xFF;
+        this->m_handle.Init.Period = 0xFFFF;
         this->m_handle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
         this->m_handle.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
         if (HAL_TIM_PWM_Init(&this->m_handle) != HAL_OK)
@@ -51,7 +51,7 @@ namespace Timer {
         this->SetDutyCycle(0);
     }
 
-    void PWM::SetDutyCycle(const uint8_t dutycycle) {
+    void PWM::SetDutyCycle(const uint16_t dutycycle) {
         TIM_OC_InitTypeDef sConfigOC = {0};
         sConfigOC.OCMode = TIM_OCMODE_PWM1;
         sConfigOC.Pulse = dutycycle;

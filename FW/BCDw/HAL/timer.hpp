@@ -32,7 +32,7 @@ namespace Timer
     public:
         PWM(BaseTimer *timer, const Channel channel, GPIO::Alternate *pin);
 
-        void SetDutyCycle(const uint8_t dutycycle);
+        void SetDutyCycle(const uint16_t dutycycle);
     private:
         BaseTimer *m_timer;
         Channel m_channel;

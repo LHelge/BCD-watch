@@ -22,6 +22,7 @@ namespace GPIO
             case Port::H: 
                 __HAL_RCC_GPIOH_CLK_ENABLE(); 
                 this ->m_gpioPort = GPIOH;
+                break;
             case Port::None:
                 this->m_gpioPort = nullptr;
                 break;
@@ -113,8 +114,8 @@ namespace GPIO
     }
 
 
-    Dummy::Dummy() : Pin(None, 0) {
-        this->m_state = RESET;
+    Dummy::Dummy(const State initState) : Pin(None, 0) {
+        this->m_state = initState;
     }
 
     State Dummy::GetState() const {

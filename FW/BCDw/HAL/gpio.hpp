@@ -63,7 +63,7 @@ namespace GPIO
 
     class Dummy : public Pin {
     public:
-        Dummy();
+        Dummy(const State initState);
     protected:
         State GetState() const override;
         void SetState(const State state) override;

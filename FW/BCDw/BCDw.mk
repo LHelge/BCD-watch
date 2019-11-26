@@ -7,7 +7,8 @@ BCDW_CPP_SRC = BCDw/BCDw.cpp \
 			   BCDw/HAL/rtc.cpp \
 			   BCDw/HAL/timer.cpp \
 			   BCDw/HAL/uart.cpp \
-			   BCDw/Drivers/lis3dh.cpp 
+			   BCDw/Drivers/lis3dh.cpp \
+			   BCDw/Drivers/display.cpp 
 
 BCDW_INC = BCDw \
            BCDw/HAL \
