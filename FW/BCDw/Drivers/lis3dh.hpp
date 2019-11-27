@@ -22,6 +22,7 @@ namespace Accelerometer
 
         
         void Init();
+        void ActivateWakeUpInterrupt();
         void getAcceleration(AccelerationVector& vector);
         State getState() const;
 
@@ -30,6 +31,8 @@ namespace Accelerometer
     private:
         I2C::I2CDevice *m_i2c;
         State m_state;
+        uint8_t m_int1Src;
+        uint8_t m_int2Src;
     };
 } // namespace Accelerometer
 

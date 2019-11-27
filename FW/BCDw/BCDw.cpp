@@ -9,11 +9,13 @@
 #include "lis3dh.hpp"
 #include "rtc.hpp"
 #include "display.hpp"
+#include "pwr.hpp"
 
 class BCDw {
     public:
         void Run(void);
         void Tick(void);
+        void Standby(void);
     private:
         RealTimeClock::Clock m_clock;
 };
@@ -117,15 +119,31 @@ void BCDw::Run(void) {
         debug->WriteLine("Error: Accelerometer initialization error!");
     }
 
+    Power::PowerControl Pwr;
 
     Accelerometer::AccelerationVector AccVector;
     RealTimeClock::Time Time;
     RealTimeClock::Date Date;
 
+    if (Pwr.WokeFromStandby()) {
+        S0.SetDutycycle(0xff);
+        for(uint32_t i = 0; i < 10; i++) {
+            LED_S_00.Toggle();
+            HAL_Delay(200);
+        }
+        S0.SetDutycycle(0x00);
+    }
+
+
     uint32_t counter = 0;
+    uint32_t counter2 = 0;
     while(1) {
         if(counter++ == 50) {
             counter = 0;
+            if(counter2++ == 10) {
+                Accelerometer.ActivateWakeUpInterrupt();
+                Pwr.Standby();
+            }
 
             this->m_clock.GetTime(Time);
             this->m_clock.GetDate(Date);

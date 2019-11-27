@@ -50,28 +50,101 @@ namespace Accelerometer
     static const uint8_t MULTI_BYTE_READ_ADDR = 0x80;
 
     // CTRL_REG1 flags
-    static const uint8_t CTRL_REG1_ODR_POWER_DOWN = 0x00;
-    static const uint8_t CTRL_REG1_ODR_1HZ    = 0x10;
-    static const uint8_t CTRL_REG1_ODR_10HZ   = 0x20;
-    static const uint8_t CTRL_REG1_ODR_25HZ   = 0x30;
-    static const uint8_t CTRL_REG1_ODR_50HZ   = 0x40;
-    static const uint8_t CTRL_REG1_ODR_100HZ  = 0x50;
-    static const uint8_t CTRL_REG1_ODR_200HZ  = 0x60;
-    static const uint8_t CTRL_REG1_ODR_400HZ  = 0x70;
-    static const uint8_t CTRL_REG1_ODR_1600HZ = 0x80;
-    static const uint8_t CTRL_REG1_ODR_5376HZ = 0x90;
-    static const uint8_t CTRL_REG1_ODR_LP_ENABLE = 0x08;
-    static const uint8_t CTRL_REG1_ODR_Z_ENABLE  = 0x04;
-    static const uint8_t CTRL_REG1_ODR_Y_ENABLE  = 0x02;
-    static const uint8_t CTRL_REG1_ODR_X_ENABLE  = 0x01;
-    static const uint8_t CTRL_REG1_ODR_XYZ_ENABLE  = 0x07; // Helper :D
+    static const uint8_t CTRL_REG1_ODR_POWER_DOWN  = 0x00;
+    static const uint8_t CTRL_REG1_ODR_1HZ         = 0x10;
+    static const uint8_t CTRL_REG1_ODR_10HZ        = 0x20;
+    static const uint8_t CTRL_REG1_ODR_25HZ        = 0x30;
+    static const uint8_t CTRL_REG1_ODR_50HZ        = 0x40;
+    static const uint8_t CTRL_REG1_ODR_100HZ       = 0x50;
+    static const uint8_t CTRL_REG1_ODR_200HZ       = 0x60;
+    static const uint8_t CTRL_REG1_ODR_400HZ       = 0x70;
+    static const uint8_t CTRL_REG1_ODR_1600HZ      = 0x80;
+    static const uint8_t CTRL_REG1_ODR_5376HZ      = 0x90;
+    static const uint8_t CTRL_REG1_LP_ENABLE       = 0x08;
+    static const uint8_t CTRL_REG1_Z_ENABLE        = 0x04;
+    static const uint8_t CTRL_REG1_Y_ENABLE        = 0x02;
+    static const uint8_t CTRL_REG1_X_ENABLE        = 0x01;
+    static const uint8_t CTRL_REG1_XYZ_ENABLE      = 0x07; // Helper :D
+    static const uint8_t CTRL_REG1_RESET           = 0x07;
+
+    // CTRL_REG2 flags
+    static const uint8_t CTRL_REG2_HPM0    = 0x00;
+    static const uint8_t CTRL_REG2_HPM1    = 0x40;
+    static const uint8_t CTRL_REG2_HPM2    = 0x80;
+    static const uint8_t CTRL_REG2_HPM3    = 0xC0;
+    static const uint8_t CTRL_REG2_HPCF0   = 0x00;
+    static const uint8_t CTRL_REG2_HPCF1   = 0x10;
+    static const uint8_t CTRL_REG2_HPCF2   = 0x20;
+    static const uint8_t CTRL_REG2_HPCF3   = 0x30;
+    static const uint8_t CTRL_REG2_FDS     = 0x08;
+    static const uint8_t CTRL_REG2_HPCLICK = 0x04;
+    static const uint8_t CTRL_REG2_HP_IA2  = 0x02;
+    static const uint8_t CTRL_REG2_HP_IA1  = 0x01;
+    static const uint8_t CTRL_REG2_RESET   = 0x00;
+    
+    
+
+    // CTRL_REG3 flags
+    static const uint8_t CTRL_REG3_I1_CLICK   = 0x80;
+    static const uint8_t CTRL_REG3_I1_IA1     = 0x40;
+    static const uint8_t CTRL_REG3_I1_IA2     = 0x20;
+    static const uint8_t CTRL_REG3_I1_ZYXDA   = 0x10;
+    static const uint8_t CTRL_REG3_I1_321DA   = 0x08;
+    static const uint8_t CTRL_REG3_I1_WTM     = 0x04;
+    static const uint8_t CTRL_REG3_I1_OVERRUN = 0x02;
+    static const uint8_t CTRL_REG3_RESET      = 0x00;
+
+    // CTRL_REG4
+    static const uint8_t CTRL_REG4_BDU       = 0x80;
+    static const uint8_t CTRL_REG4_BLE       = 0x40;
+    static const uint8_t CTRL_REG4_FS_2G     = 0x00;
+    static const uint8_t CTRL_REG4_FS_4G     = 0x10;
+    static const uint8_t CTRL_REG4_FS_8G     = 0x20;
+    static const uint8_t CTRL_REG4_FS_16G    = 0x30;
+    static const uint8_t CTRL_REG4_HR        = 0x08;
+    static const uint8_t CTRL_REG4_ST_NORMAL = 0x00;
+    static const uint8_t CTRL_REG4_ST_0      = 0x02;
+    static const uint8_t CTRL_REG4_ST_1      = 0x04;
+    static const uint8_t CTRL_REG4_SIM       = 0x01;
+    static const uint8_t CTRL_REG4_RESET     = 0x00;
+
+
+    // CTRL_REG5 flags
+    static const uint8_t CTRL_REG5_BOOT     = 0x80;
+    static const uint8_t CTRL_REG5_FIFO_EN  = 0x40;
+    static const uint8_t CTRL_REG5_LIR_INT1 = 0x08;
+    static const uint8_t CTRL_REG5_D4D_INT1 = 0x04;
+    static const uint8_t CTRL_REG5_LIR_INT2 = 0x02;
+    static const uint8_t CTRL_REG5_D4D_INT2 = 0x01;
+    static const uint8_t CTRL_REG5_RESET    = 0x00;
+    
+    
+    // CTRL_REG6 flags
+    static const uint8_t CTRL_REG6_I2_CLICK     = 0x80;
+    static const uint8_t CTRL_REG6_I2_IA1       = 0x40;
+    static const uint8_t CTRL_REG6_I2_IA2       = 0x20;
+    static const uint8_t CTRL_REG6_I2_BOOT      = 0x10;
+    static const uint8_t CTRL_REG6_I2_ACT       = 0x04;
+    static const uint8_t CTRL_REG6_INT_POLARITY = 0x02;
+    static const uint8_t CTRL_REG6_RESET        = 0x00;
+
+
+
+    // INT1_CFG flags
+    static const uint8_t INT1_CFG_AOI  = 0x80;
+    static const uint8_t INT1_CFG_6D   = 0x40;
+    static const uint8_t INT1_CFG_ZHIE = 0x20;
+    static const uint8_t INT1_CFG_ZLIE = 0x10;
+    static const uint8_t INT1_CFG_YHIE = 0x08;
+    static const uint8_t INT1_CFG_YLIE = 0x04;
+    static const uint8_t INT1_CFG_XHIE = 0x02;
+    static const uint8_t INT1_CFG_XLIE = 0x01;
 
     // TODO: Add other registers flags
 
     static const uint8_t WhoAmI = 0b00110011;
 
     LIS3DH::LIS3DH(I2C::I2CDevice *i2c) {
-        this->m_state = Reset;
         this->m_i2c = i2c;
 
         uint8_t whoami;
@@ -81,6 +154,20 @@ namespace Accelerometer
         if(whoami != WhoAmI) {
             this->m_state = Error;
         }
+        else {
+            // Read interrupt sources before resetting memory content
+            this->m_i2c->ReadReg(INT1_SRC, &this->m_int1Src);
+            this->m_i2c->ReadReg(INT2_SRC, &this->m_int2Src);
+
+            // Reset control registers (if there was an interrupt)
+            this->m_i2c->WriteReg(CTRL_REG1, CTRL_REG1_RESET);
+            this->m_i2c->WriteReg(CTRL_REG2, CTRL_REG2_RESET);
+            this->m_i2c->WriteReg(CTRL_REG3, CTRL_REG3_RESET);
+            this->m_i2c->WriteReg(CTRL_REG4, CTRL_REG4_RESET);
+            this->m_i2c->WriteReg(CTRL_REG5, CTRL_REG5_RESET);
+            this->m_i2c->WriteReg(CTRL_REG6, CTRL_REG6_RESET);
+            this->m_state = Reset;
+        }
     }
 
 
@@ -89,15 +176,75 @@ namespace Accelerometer
             return;
         }
 
+        // TODO: check these later
+
+        // Low power mode @ 50 Hz, X, Y & Z enabled
         this->m_i2c->WriteReg(CTRL_REG1, 
-            CTRL_REG1_ODR_10HZ | 
-            CTRL_REG1_ODR_LP_ENABLE | 
-            CTRL_REG1_ODR_XYZ_ENABLE
+            CTRL_REG1_ODR_50HZ | 
+            CTRL_REG1_LP_ENABLE |
+            CTRL_REG1_XYZ_ENABLE
+        );
+
+        this->m_i2c->WriteReg(CTRL_REG2,
+            CTRL_REG2_RESET
+        );
+
+        this->m_i2c->WriteReg(CTRL_REG3,
+            CTRL_REG3_RESET
+        );
+
+        this->m_i2c->WriteReg(CTRL_REG4,
+            CTRL_REG4_RESET
+        );
+
+        this->m_i2c->WriteReg(CTRL_REG5,
+            CTRL_REG5_RESET
+        );
+
+        this->m_i2c->WriteReg(CTRL_REG6,
+            CTRL_REG6_RESET
         );
 
         this->m_state = Ready;
     }
 
+
+    void LIS3DH::ActivateWakeUpInterrupt() {
+
+        // TODO: Select a better interrupt, perhaps click/doubleclick or 6D
+
+        this->m_i2c->WriteReg(CTRL_REG1, 
+            CTRL_REG1_ODR_10HZ | 
+            CTRL_REG1_LP_ENABLE | 
+            CTRL_REG1_X_ENABLE |
+            CTRL_REG1_Y_ENABLE 
+        );
+
+        this->m_i2c->WriteReg(CTRL_REG2, 0x00);
+
+        this->m_i2c->WriteReg(CTRL_REG3, 
+            CTRL_REG3_I1_IA1
+        );
+
+        this->m_i2c->WriteReg(CTRL_REG4, 0x00);
+
+        // Latch interrupt until SRC reg is read
+        this->m_i2c->WriteReg(CTRL_REG5,
+            CTRL_REG5_LIR_INT1
+        );
+        
+        // Threshold 
+        this->m_i2c->WriteReg(INT1_THS, 0x15);
+
+        // Duration instant
+        this->m_i2c->WriteReg(INT1_DURATION, 0);
+
+
+        this->m_i2c->WriteReg(INT1_CFG,
+            INT1_CFG_XHIE |
+            INT1_CFG_YHIE
+        );
+    }
    
     void LIS3DH::getAcceleration(AccelerationVector& vector) {
         uint8_t data[6];
