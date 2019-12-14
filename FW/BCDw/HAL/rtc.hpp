@@ -23,10 +23,17 @@ namespace RealTimeClock
         Clock();
 
         /**
-         * @brief Update time from HW RTC
+         * @brief Load time from HW RTC
          * 
          */
-        void Update();
+        void Load();
+
+
+        /**
+         * @brief Save time to HW RTC
+         * 
+         */
+        void Save();
 
 
         /**

@@ -17,7 +17,7 @@ class BCDw {
         void Tick(void);
         void Standby(void);
     private:
-        RealTimeClock::Clock m_clock;
+        RealTimeClock::Clock *m_clock;
 };
 
 static BCDw watch;
@@ -124,6 +124,8 @@ void BCDw::Run(void) {
     Accelerometer::AccelerationVector AccVector;
     RealTimeClock::Time Time;
     RealTimeClock::Date Date;
+    RealTimeClock::Clock Clock;
+    this->m_clock = &Clock;
 
     if (Pwr.WokeFromStandby()) {
         S0.SetDutycycle(0xff);
@@ -132,21 +134,39 @@ void BCDw::Run(void) {
             HAL_Delay(200);
         }
         S0.SetDutycycle(0x00);
+
+        Clock.Load();
+    }
+    else {
+        Time.H = 22;
+        Time.M = 28;
+        Time.S = 0;
+
+        Date.Y = 19;
+        Date.M = 12;
+        Date.D = 14;
+
+        Clock.SetTime(Time);
+        Clock.SetDate(Date);
+
+        Clock.Save();
     }
 
+    Display.Dim(Display::ALL, 0x7f);
 
     uint32_t counter = 0;
     uint32_t counter2 = 0;
     while(1) {
         if(counter++ == 50) {
             counter = 0;
-            if(counter2++ == 10) {
+            if(counter2++ == 30) {
                 Accelerometer.ActivateWakeUpInterrupt();
                 Pwr.Standby();
             }
 
-            this->m_clock.GetTime(Time);
-            this->m_clock.GetDate(Date);
+            Clock.Load();
+            Clock.GetTime(Time);
+            Clock.GetDate(Date);
             
             if(Button) {
                 
@@ -169,13 +189,15 @@ void BCDw::Run(void) {
             Display.Set(Time);
         }
 
-        if(counter <= 5) Display.Dim(Display::ALL, 50 * counter);
-        else if( counter >= 45) Display.Dim(Display::ALL, 50 * (50 - counter));
+        // if(counter <= 5) Display.Dim(Display::ALL, 50 * counter);
+        // else if( counter >= 45) Display.Dim(Display::ALL, 50 * (50 - counter));
 
         HAL_Delay(20);
     }
 }
 
 void BCDw::Tick() {
-    this->m_clock.Tick();
+    if(this->m_clock != nullptr) {
+        //this->m_clock->Tick();
+    }
 }

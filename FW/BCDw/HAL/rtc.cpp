@@ -6,34 +6,52 @@ namespace RealTimeClock
     Clock::Clock() {
         memset(&this->m_handle, 0, sizeof(RTC_InitTypeDef));
 
-        // __HAL_RCC_RTC_ENABLE();
+        __HAL_RCC_RTC_ENABLE();
 
-        // this->m_handle.Instance = RTC;
-        // this->m_handle.Init.HourFormat = RTC_HOURFORMAT_24;
-        // this->m_handle.Init.AsynchPrediv = 127;
-        // this->m_handle.Init.SynchPrediv = 255;
-        // this->m_handle.Init.OutPut = RTC_OUTPUT_DISABLE;
-        // this->m_handle.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
-        // this->m_handle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-        // this->m_handle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-        // if (HAL_RTC_Init(&this->m_handle) != HAL_OK)
-        // {
-        //     // TODO: assert
-        // }
-
-        this->Update();
+        this->m_handle.Instance = RTC;
+        this->m_handle.Init.HourFormat = RTC_HOURFORMAT_24;
+        this->m_handle.Init.AsynchPrediv = 127;
+        this->m_handle.Init.SynchPrediv = 255;
+        this->m_handle.Init.OutPut = RTC_OUTPUT_DISABLE;
+        this->m_handle.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
+        this->m_handle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+        this->m_handle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+        if (HAL_RTC_Init(&this->m_handle) != HAL_OK)
+        {
+            // TODO: assert
+        }
     }
 
-    void Clock::Update() {
-        // TODO: update time/date from RTC HW
+    void Clock::Load() {
+        RTC_TimeTypeDef time;
+        RTC_DateTypeDef date;
 
-        this->m_time.H = 12;
-        this->m_time.M = 13;
-        this->m_time.S = 14;
+        HAL_RTC_GetTime(&this->m_handle, &time, RTC_FORMAT_BIN);
+        HAL_RTC_GetDate(&this->m_handle, &date, RTC_FORMAT_BIN);
 
-        this->m_date.Y = 19;
-        this->m_date.M = 11;
-        this->m_date.D = 25;
+        this->m_time.H = time.Hours;
+        this->m_time.M = time.Minutes;
+        this->m_time.S = time.Seconds;
+
+        this->m_date.Y = date.Year;
+        this->m_date.M = date.Month;
+        this->m_date.D = date.Date;
+    }
+
+    void Clock::Save() {
+        RTC_TimeTypeDef time;
+        RTC_DateTypeDef date;
+
+        time.Hours = this->m_time.H;
+        time.Minutes = this->m_time.M;
+        time.Seconds = this->m_time.S;
+
+        date.Year = this->m_date.Y;
+        date.Month = this->m_date.M;
+        date.Date = this->m_date.D;
+
+        HAL_RTC_SetTime(&this->m_handle, &time, RTC_FORMAT_BIN);
+        HAL_RTC_SetDate(&this->m_handle, &date, RTC_FORMAT_BIN);
     }
 
     void Clock::Tick() {
@@ -54,7 +72,7 @@ namespace RealTimeClock
 
         if(this->m_time.H >= 24) {
             // Let HW RTC handle calendar.
-            this->Update();
+            this->Load();
         }
     }
 
