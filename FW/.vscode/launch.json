@@ -9,7 +9,7 @@
             "request": "launch",
             "servertype": "openocd",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/BCD-watch.elf",
+            "executable": "./build/BCDwatch.elf",
             "name": "Debug OpenOCD ST-LINK",
             "device": "STM32L071CB",
             "configFiles": [
