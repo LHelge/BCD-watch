@@ -23,8 +23,8 @@ void StateMachine::HandleNextEvent() {
             case Events::ButtonHold:      nextState = this->m_currentState->ButtonHold(this->m_watch); break;
             default:                      nextState = this->m_currentState; break; // Not necessary
         }
+        this->ChangeState(nextState);
     }
-    this->ChangeState(nextState);
 }
 
 

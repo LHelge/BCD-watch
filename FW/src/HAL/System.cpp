@@ -11,6 +11,7 @@
 namespace System {
 
     volatile uint32_t System::m_delayCounter = 0;
+    bool System::m_resumed = false;
 
     void System::Initialize() {
         LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
@@ -59,6 +60,23 @@ namespace System {
         /* Wait till System clock is ready */
         while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL) {}
 
+        
+        // Check if system aws resumed from standby
+        System::m_resumed = false;
+        if (LL_PWR_IsActiveFlag_SB() != 0)
+        { 
+            System::m_resumed = true;
+
+            LL_PWR_ClearFlag_SB(); 
+        }
+
+        // Check and Clear the Wakeup flag
+        if (LL_PWR_IsActiveFlag_WU() != 0)
+        {
+            LL_PWR_ClearFlag_WU();
+        }
+
+
         LL_Init1msTick(32000000);
         LL_SYSTICK_SetClkSource(LL_SYSTICK_CLKSOURCE_HCLK);
         LL_SetSystemCoreClock(32000000);
@@ -103,6 +121,10 @@ namespace System {
     }
 
     void System::Standby(const Wakeup wakeup) {
+        // TODO: Remove this, temporary
+        LL_DBGMCU_EnableDBGStandbyMode();
+
+
         /* Disable all used wakeup sources */
         LL_PWR_DisableWakeUpPin(wakeup);
   
@@ -127,9 +149,18 @@ namespace System {
         
         /* Set SLEEPDEEP bit of Cortex System Control Register */
         LL_LPM_EnableDeepSleep();
+
+        #if defined ( __CC_ARM)
+            __force_stores();
+        #endif
         
         /* Request Wait For Interrupt */
         __WFI();
+    }
+
+
+    bool System::IsResumed() {
+        return System::m_resumed;
     }
 
     void System::SysTickInterrupt() {

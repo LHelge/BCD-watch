@@ -37,12 +37,14 @@ namespace System {
         static void Delay(const uint32_t milliseconds);
         static void Reset();
         static void Standby(const Wakeup wakeup);
+        static bool IsResumed();
         static uint32_t GetCoreClock();
 
         // Interrupts
         static void SysTickInterrupt();
     private:
         static volatile uint32_t m_delayCounter;
+        static bool m_resumed;
     };
 
 }
