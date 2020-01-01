@@ -91,7 +91,7 @@ BCDWatch::BCDWatch() :
     Brightness = 0xFF;
 }
 
-void BCDWatch::Init() {
+void BCDWatch::Init(const bool debug) {
     // Init all led pins as outputs
     LedS00.InitOutput();
     LedS01.InitOutput();
@@ -115,14 +115,15 @@ void BCDWatch::Init() {
     LedH03.InitOutput();
     LedH10.InitOutput();
     LedH11.InitOutput();
-#ifdef DEBUG
-    LedH12_DTx.InitAlternate(0, GPIO::Type::PushPull, GPIO::Speed::VeryHigh);
-    LedH13_DRx.InitAlternate(0, GPIO::Type::PushPull, GPIO::Speed::VeryHigh);
-    DbgSerial.Init(115200);
-#else
-    LedH12_DTx.InitOutput();
-    LedH13_DRx.InitOutput();
-#endif
+    if(debug) {
+        LedH12_DTx.InitAlternate(0, GPIO::Type::PushPull, GPIO::Speed::VeryHigh);
+        LedH13_DRx.InitAlternate(0, GPIO::Type::PushPull, GPIO::Speed::VeryHigh);
+        DbgSerial.Init(115200);
+    }
+    else {
+        LedH12_DTx.InitOutput();
+        LedH13_DRx.InitOutput();
+    }
 
     // Init wakeup as input
     Wake.InitInput();

@@ -13,7 +13,7 @@ namespace System {
     volatile uint32_t System::m_delayCounter = 0;
     bool System::m_resumed = false;
 
-    void System::Initialize() {
+    void System::Initialize(const bool debug) {
         LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
 
         if(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1)
@@ -60,7 +60,6 @@ namespace System {
         /* Wait till System clock is ready */
         while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL) {}
 
-        
         // Check if system aws resumed from standby
         System::m_resumed = false;
         if (LL_PWR_IsActiveFlag_SB() != 0)
@@ -86,6 +85,11 @@ namespace System {
         
         LL_SYSTICK_EnableIT();
         __enable_irq();
+
+        if(debug) {
+            // In debug mode, keep SWD active in standby mode
+            LL_DBGMCU_EnableDBGStandbyMode();
+        }
     }
 
     uint32_t System::GetCoreClock() {
@@ -121,40 +125,18 @@ namespace System {
     }
 
     void System::Standby(const Wakeup wakeup) {
-        // TODO: Remove this, temporary
-        LL_DBGMCU_EnableDBGStandbyMode();
-
-
-        /* Disable all used wakeup sources */
         LL_PWR_DisableWakeUpPin(wakeup);
-  
-        /* Clear all wake up Flag */
         LL_PWR_ClearFlag_WU();
-  
-        /* Enable wakeup pin */
         LL_PWR_EnableWakeUpPin(wakeup);
-  
-        /* As default User push-button state is high level, need to clear all wake up Flag again */
         LL_PWR_ClearFlag_WU();
-
-        /* Enable ultra low power mode */
         LL_PWR_EnableUltraLowPower();
-
-        /** Request to enter STANDBY mode
-            * Following procedure describe in STM32L0xx Reference Manual
-            * See PWR part, section Low-power modes, Standby mode
-            */
-        /* Set STANDBY mode when CPU enters deepsleep */
         LL_PWR_SetPowerMode(LL_PWR_MODE_STANDBY);
-        
-        /* Set SLEEPDEEP bit of Cortex System Control Register */
         LL_LPM_EnableDeepSleep();
 
         #if defined ( __CC_ARM)
             __force_stores();
         #endif
         
-        /* Request Wait For Interrupt */
         __WFI();
     }
 

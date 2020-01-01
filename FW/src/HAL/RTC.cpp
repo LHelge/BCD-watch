@@ -11,7 +11,7 @@ namespace RealTimeClock {
         LL_RTC_SetHourFormat(RTC, LL_RTC_HOURFORMAT_24HOUR);
         LL_RTC_SetAsynchPrescaler(RTC, asynchPrescaler);
         LL_RTC_SetSynchPrescaler(RTC, synchPrescaler);
-        this->DisableInit();        
+        this->DisableInit();
     }
 
     void RealTimeClock::GetTime(Time &time) {
@@ -44,14 +44,15 @@ namespace RealTimeClock {
 
 
     bool RealTimeClock::IsSet() {
-        return LL_RTC_BAK_GetRegister(RTC, LL_RTC_BKP_DR0) == RTC_IS_SET_BACKUP_FLAG;
+        uint32_t flag = LL_RTC_BAK_GetRegister(RTC, LL_RTC_BKP_DR0);
+        return flag == RTC_IS_SET_BACKUP_FLAG;
     }
 
 
     void RealTimeClock::EnableInit() {
         LL_RTC_DisableWriteProtection(RTC);
         LL_RTC_EnableInitMode(RTC);
-        while(LL_RTC_IsActiveFlag_INIT(RTC)) {}
+        while(LL_RTC_IsActiveFlag_INIT(RTC) == false) {}
     }
 
 

@@ -147,6 +147,7 @@ namespace Accelerometer
     LIS3DH::LIS3DH(I2C::I2CDevice *i2c, GPIO::Pin *intPin) {
         this->m_i2c = i2c;
         this->m_intPin = intPin;
+        this->m_initialized = false;
     }
 
 
@@ -201,6 +202,8 @@ namespace Accelerometer
         this->m_i2c->WriteReg(CTRL_REG6,
             CTRL_REG6_RESET
         );
+
+        this->m_initialized = true;
     }
 
 
@@ -255,6 +258,10 @@ namespace Accelerometer
     }
 
     Events LIS3DH::Tick() {
+        if(this->m_initialized == false) {
+            return Events::None;
+        }
+
         if(this->m_intPin->Get()) {
             this->m_i2c->ReadReg(INT1_SRC, &this->m_int1Src);
             this->m_i2c->ReadReg(INT2_SRC, &this->m_int2Src);

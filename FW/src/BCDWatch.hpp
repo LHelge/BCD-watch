@@ -15,7 +15,7 @@ class BCDWatch {
 public:
     BCDWatch();
 
-    void Init();
+    void Init(const bool debug = false);
 private:
     GPIO::Pin LedS00;
     GPIO::Pin LedS01;

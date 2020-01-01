@@ -32,7 +32,7 @@ namespace System {
 
     class System {
     public:
-        static void Initialize();
+        static void Initialize(const bool debug = false);
         static void EnableClock(const ClockHW clock);
         static void Delay(const uint32_t milliseconds);
         static void Reset();

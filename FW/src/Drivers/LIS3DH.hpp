@@ -24,6 +24,7 @@ namespace Accelerometer
         
         static uint8_t getAddress(const bool sda);
     private:
+        bool m_initialized;
         I2C::I2CDevice *m_i2c;
         GPIO::Pin *m_intPin;
         uint8_t m_int1Src;

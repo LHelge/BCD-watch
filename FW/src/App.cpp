@@ -9,9 +9,16 @@ static BCDWatch Watch;
 static StateMachine StateMachine(&Watch);
 
 void App::Run() {
-    System::System::Initialize();
 
+#if DEBUG == 1
+    System::System::Initialize(true);
+    Watch.Init(true);
+#else
+    System::System::Initialize();
     Watch.Init();
+#endif
+
+
     Watch.Brightness = 128;
 
     // Starting state
