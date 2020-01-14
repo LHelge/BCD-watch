@@ -1,7 +1,7 @@
 #ifndef _UART_H
 #define _UART_H
 
-#include "gpio.hpp"
+#include "GPIO.hpp"
 #include "stm32l0xx_ll_usart.h"
 
 namespace UART {
