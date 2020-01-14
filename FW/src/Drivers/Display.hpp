@@ -1,7 +1,7 @@
 #ifndef _DISPLAY_HPP
 #define _DISPLAY_HPP
 
-#include "Gpio.hpp"
+#include "GPIO.hpp"
 #include "Timer.hpp"
 #include "RTC.hpp"
 
