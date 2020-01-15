@@ -1,4 +1,4 @@
-#include "lis3dh.hpp"
+#include "LIS3DH.hpp"
 
 namespace Accelerometer
 {

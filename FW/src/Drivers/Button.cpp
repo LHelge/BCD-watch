@@ -1,4 +1,4 @@
-#include "button.hpp"
+#include "Button.hpp"
 
 #define BUTTONPRESS_LIMIT_LOW     (100)
 #define BUTTONPRESS_LIMIT_SHORT  (2000)

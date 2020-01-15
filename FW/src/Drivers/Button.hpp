@@ -1,7 +1,7 @@
 #ifndef _BUTTON_HPP
 #define _BUTTON_HPP
 
-#include "gpio.hpp"
+#include "GPIO.hpp"
 #include "stdint.h"
 #include "stdbool.h"
 #include "Events.hpp"
