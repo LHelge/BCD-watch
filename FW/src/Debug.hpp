@@ -3,6 +3,7 @@
 
 #include "UART.hpp"
 #include "RTC.hpp"
+#include "LIS3DH.hpp"
 
 
 namespace Debug
@@ -20,6 +21,7 @@ namespace Debug
         void Write(int32_t i);
         void Write(RealTimeClock::Time time);
         void Write(RealTimeClock::Date date);
+        void Write(Accelerometer::AccelerationVector &vec);
         void WriteLine(const char *line);
         void NewLine();
     private:
