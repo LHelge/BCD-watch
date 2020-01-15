@@ -26,6 +26,10 @@ void App::Run() {
 
     InitPeriod(1);
 
+    #if DEBUG == 1
+    uint32_t counter = 0;
+    #endif
+
     while(1) {
         Events event;
 
@@ -42,6 +46,18 @@ void App::Run() {
         }
 
         StateMachine.HandleNextEvent();
+
+        #if DEBUG == 1
+        if(counter++ > 1000) {
+            Accelerometer::AccelerationVector vec;
+
+            Watch.Accelerometer.getAcceleration(vec);
+            Watch.Debug.Write(vec);
+            Watch.Debug.NewLine();
+
+            counter = 0;
+        }
+        #endif
 
         EndPeriod();
     }

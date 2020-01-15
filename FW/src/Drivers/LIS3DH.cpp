@@ -47,7 +47,7 @@ namespace Accelerometer
     static const uint8_t ACT_DUR = 0x3F;
 
     // Multi-byte read flag in register address
-    static const uint8_t MULTI_BYTE_READ_ADDR = 0x80;
+    static const uint8_t MULTI_BYTE_READ_ADDR_FLAG = 0x80;
 
     // CTRL_REG1 flags
     static const uint8_t CTRL_REG1_ODR_POWER_DOWN  = 0x00;
@@ -247,14 +247,10 @@ namespace Accelerometer
     void LIS3DH::getAcceleration(AccelerationVector& vector) {
         uint8_t data[6];
 
-        this->m_i2c->ReadReg(OUT_X_L | MULTI_BYTE_READ_ADDR, data, 6);
+        vector.X = m_i2c->ReadReg<int16_t>(OUT_X_L | MULTI_BYTE_READ_ADDR_FLAG);
+        vector.Y = m_i2c->ReadReg<int16_t>(OUT_Y_L | MULTI_BYTE_READ_ADDR_FLAG);
+        vector.Z = m_i2c->ReadReg<int16_t>(OUT_Z_L | MULTI_BYTE_READ_ADDR_FLAG);
 
-        vector.X  = data[0] << 0;
-        vector.X |= data[1] << 8;
-        vector.Y  = data[2] << 0;
-        vector.Y |= data[3] << 8;
-        vector.Z  = data[4] << 0;
-        vector.Z |= data[5] << 8;
     }
 
     Events LIS3DH::Tick() {
