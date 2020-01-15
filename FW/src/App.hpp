@@ -1,10 +1,12 @@
 #ifndef _APP_HPP
 #define _APP_HPP
 
-class App {
+#include "Task.hpp"
+
+class App : public FreeRTOS::Task {
 public:
-    static void Run();
-    static void Tick();
+    App() : Task("App", 512, tskIDLE_PRIORITY+1) {};
+    void Run() override;
 };
 
 #endif

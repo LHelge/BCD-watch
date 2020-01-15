@@ -24,25 +24,25 @@ void App::Run() {
     // Starting state
     StateMachine.ChangeState(&States::DisplayTime::Instance);
 
+    InitPeriod(1);
+
     while(1) {
+        Events event;
+
+        // Check button events
+        event = Watch.Button.Tick();
+        if(event) {
+            StateMachine.Event(event);
+        }
+
+        // Check Accelerometer events
+        event = Watch.Accelerometer.Tick();
+        if(event) {
+            StateMachine.Event(event);
+        }
+
         StateMachine.HandleNextEvent();
+
+        EndPeriod();
     }
-}
-
-void App::Tick() {
-    Events event;
-
-    // Check button events
-    event = Watch.Button.Tick();
-    if(event) {
-        StateMachine.Event(event);
-    }
-
-    // Check Accelerometer events
-    event = Watch.Accelerometer.Tick();
-    if(event) {
-        StateMachine.Event(event);
-    }
-
-    StateMachine.Event(Events::Tick);
 }

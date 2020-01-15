@@ -15,9 +15,15 @@ void StateMachine::HandleNextEvent() {
     Events event;
     State *nextState;
 
+    // Ugly hack while trying out FreeRTOS always tick current state
+    nextState = this->m_currentState->Tick(this->m_watch);
+    if(nextState != m_currentState) {
+        ChangeState(nextState);
+        return;
+    }
+
     if(this->m_eventQueue.Dequeue(event)) {
         switch (event) {
-            case Events::Tick:            nextState = this->m_currentState->Tick(this->m_watch); break;
             case Events::ButtonPress:     nextState = this->m_currentState->ButtonPress(this->m_watch); break;
             case Events::ButtonLongPress: nextState = this->m_currentState->ButtonLongPress(this->m_watch); break;
             case Events::ButtonHold:      nextState = this->m_currentState->ButtonHold(this->m_watch); break;

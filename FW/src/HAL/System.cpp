@@ -1,5 +1,4 @@
 #include "System.hpp"
-#include "App.hpp"
 
 #include "stm32l0xx_ll_rcc.h"
 #include "stm32l0xx_ll_pwr.h"
@@ -75,16 +74,11 @@ namespace System {
             LL_PWR_ClearFlag_WU();
         }
 
-
-        LL_Init1msTick(32000000);
         LL_SYSTICK_SetClkSource(LL_SYSTICK_CLKSOURCE_HCLK);
         LL_SetSystemCoreClock(32000000);
         
         LL_RCC_SetUSARTClockSource(LL_RCC_USART1_CLKSOURCE_PCLK2);
         LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_PCLK1);
-        
-        LL_SYSTICK_EnableIT();
-        __enable_irq();
 
         if(debug) {
             // In debug mode, keep SWD active in standby mode
@@ -114,12 +108,6 @@ namespace System {
         }
     }
 
-    void System::Delay(const uint32_t milliseconds) {
-        System::m_delayCounter = milliseconds;
-
-        while(System::m_delayCounter > 0);
-    }
-
     void System::Reset() {
         NVIC_SystemReset();
     }
@@ -144,12 +132,4 @@ namespace System {
     bool System::IsResumed() {
         return System::m_resumed;
     }
-
-    void System::SysTickInterrupt() {
-        if(System::m_delayCounter > 0) 
-            System::m_delayCounter--;
-
-        App::Tick();
-    }
-
 }
