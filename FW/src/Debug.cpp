@@ -66,6 +66,15 @@ namespace Debug
         this->m_port->Write(buf, 10);
     }
 
+    void Debug::Write(Accelerometer::AccelerationVector &vec) {
+        this->Write("X=");
+        this->Write(vec.X);
+        this->Write(", Y=");
+        this->Write(vec.Y);
+        this->Write(", Z=");
+        this->Write(vec.Z);
+    }
+
     
     void Debug::WriteLine(const char *line) {
         this->Write(line);
