@@ -13,6 +13,13 @@ namespace FreeRTOS
 
         void Start();
         static void StartScheduler();
+
+
+        // Four prio-levels should be enough for now
+        static constexpr UBaseType_t IdlePriority   = tskIDLE_PRIORITY;
+        static constexpr UBaseType_t LowPriority    = tskIDLE_PRIORITY + 1;
+        static constexpr UBaseType_t MediumPriority = tskIDLE_PRIORITY + 2;
+        static constexpr UBaseType_t HighPriority   = tskIDLE_PRIORITY + 3;
     protected:
         virtual void Run() = 0;
         void InitPeriod(uint32_t milliseconds);

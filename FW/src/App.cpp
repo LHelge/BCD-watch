@@ -6,7 +6,7 @@
 
 
 static BCDWatch Watch;
-static StateMachine StateMachine(&Watch);
+static StateMachine AppStateMachine(&Watch, &States::DisplayTime::Instance);
 
 void App::Run() {
 
@@ -18,11 +18,9 @@ void App::Run() {
     Watch.Init();
 #endif
 
+    AppStateMachine.Start();
 
     Watch.Brightness = 128;
-
-    // Starting state
-    StateMachine.ChangeState(&States::DisplayTime::Instance);
 
     InitPeriod(1);
 
@@ -36,16 +34,16 @@ void App::Run() {
         // Check button events
         event = Watch.Button.Tick();
         if(event) {
-            StateMachine.Event(event);
+            AppStateMachine.Event(event);
         }
 
         // Check Accelerometer events
         event = Watch.Accelerometer.Tick();
         if(event) {
-            StateMachine.Event(event);
+            AppStateMachine.Event(event);
         }
 
-        StateMachine.HandleNextEvent();
+        AppStateMachine.Event(Events::Tick);
 
         #if DEBUG == 1
         if(counter++ > 1000) {

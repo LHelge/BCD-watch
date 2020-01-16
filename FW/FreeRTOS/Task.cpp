@@ -50,7 +50,7 @@ namespace FreeRTOS
      * @param milliseconds 
      */
     void Task::InitPeriod(uint32_t milliseconds) {
-        m_period = (configTICK_RATE_HZ * milliseconds) / 1000;
+        m_period = pdMS_TO_TICKS(milliseconds);
         m_previousPeriod = xTaskGetTickCount();
         m_periodInitialized = true;
     }
@@ -71,7 +71,7 @@ namespace FreeRTOS
      * @param milliseconds Number of milliseconds to delay
      */
     void Task::Delay(uint32_t milliseconds) {
-        TickType_t ticks = (configTICK_RATE_HZ * milliseconds) / 1000;
+        TickType_t ticks = pdMS_TO_TICKS(milliseconds);
         vTaskDelay(ticks);
     }
 

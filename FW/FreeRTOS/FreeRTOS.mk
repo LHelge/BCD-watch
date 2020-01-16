@@ -11,7 +11,8 @@ FreeRTOS/source/timers.c \
 
 
 FREERTOS_CPP_SOURCES = \
-FreeRTOS/Task.cpp
+FreeRTOS/Task.cpp \
+
 
 
 FREERTOS_INCLUDES = \

@@ -2,7 +2,7 @@
 #define _EVENTS_HPP
 
 
-enum Events {
+enum Events : uint8_t {
     None = 0,
     Tick,
     ButtonPress,
