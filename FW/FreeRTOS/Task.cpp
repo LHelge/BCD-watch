@@ -1,11 +1,13 @@
 #include "Task.hpp"
+#include "string.h"
+
 
 namespace FreeRTOS
 {
     Task::Task(const char *name, const uint16_t stackSize, const UBaseType_t priority) {
-        for(uint32_t i = 0; i < configMAX_TASK_NAME_LEN; i++) {
-            m_name[i] = name[i];
-        }
+        strncpy(m_name, name, configMAX_TASK_NAME_LEN);
+        // strncpy() does not guarantee null-termination.
+        m_name[configMAX_TASK_NAME_LEN - 1] = '\0';
 
         m_stackSize = stackSize;
         m_priority = priority;
