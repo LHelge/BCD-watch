@@ -38,11 +38,13 @@ extern "C" void Reset_Handler(void) {
     //Initiate static constructors
     __libc_init_array();
 
+    // Start application task
     Application.Start();
 
-    vTaskStartScheduler();
+    // Start FreeRTOS sceduler
+    FreeRTOS::Task::StartScheduler();
 
-    // Should not get here, definetly not with only static memory allocation in FreeRTOS
+    // Should not get here
 
     // Reset if main returns?
     System::System::Reset();

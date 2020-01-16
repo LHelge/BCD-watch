@@ -12,6 +12,7 @@ namespace FreeRTOS
         ~Task();
 
         void Start();
+        static void StartScheduler();
     protected:
         virtual void Run() = 0;
         void InitPeriod(uint32_t milliseconds);
@@ -21,7 +22,7 @@ namespace FreeRTOS
         static void TaskFunction(void *instance);
         TaskHandle_t m_handle;
         char m_name[configMAX_TASK_NAME_LEN];
-        uint16_t m_stackSize;
+        configSTACK_DEPTH_TYPE m_stackSize;
         UBaseType_t m_priority;
         bool m_periodInitialized;
         TickType_t m_previousPeriod;

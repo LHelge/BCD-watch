@@ -4,20 +4,40 @@
 
 namespace FreeRTOS
 {
+    /**
+     * @brief Construct a new Task:: Task object
+     * 
+     * @param name Task name, will be truncated if longer than configMAX_TASK_LENGTH
+     * @param stackSize Stack size in bytes, rounded up to nearest sizeof(portSTACK_TYPE)
+     * @param priority Task priority
+     */
     Task::Task(const char *name, const uint16_t stackSize, const UBaseType_t priority) {
         strncpy(m_name, name, configMAX_TASK_NAME_LEN);
         // strncpy() does not guarantee null-termination.
         m_name[configMAX_TASK_NAME_LEN - 1] = '\0';
 
-        m_stackSize = stackSize;
+        // FreeRTOS takes stack size in words of length sizeof(portSTACK_TYPE)
+        // round up
+        m_stackSize = (configSTACK_DEPTH_TYPE)((stackSize + sizeof(portSTACK_TYPE) - 1) / sizeof(portSTACK_TYPE));
+
         m_priority = priority;
         m_periodInitialized = false;
     }
 
+
+    /**
+     * @brief Destroy the Task object
+     * 
+     */
     Task::~Task() {
         vTaskDelete(m_handle);
     }
 
+
+    /**
+     * @brief Start executing task.
+     * 
+     */
     void Task::Start() {
         xTaskCreate(Task::TaskFunction, m_name, m_stackSize, this, m_priority, &m_handle);
     }
@@ -69,5 +89,14 @@ namespace FreeRTOS
         vTaskDelete(task->m_handle);
     }
 
+
+    /**
+     * @brief Start FreeRTOS scheduler. 
+     *        NOTE! This function shall never return under normal circumstances.
+     * 
+     */
+    void Task::StartScheduler() {
+        vTaskStartScheduler();
+    }
 
 } // namespace FreeRTOS
