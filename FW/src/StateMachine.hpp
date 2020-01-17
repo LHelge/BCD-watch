@@ -6,7 +6,8 @@
 #include "Task.hpp"
 #include "Queue.hpp"
 
-class StateMachine : public FreeRTOS::Task {
+
+class StateMachine : public FreeRTOS::Task<512> {
 public:
     StateMachine(BCDWatch *watch, State *initialState);
 
@@ -14,7 +15,7 @@ public:
     void Event(Events event);
 private:
     void ChangeState(State *newState);
-    FreeRTOS::Queue<Events> m_eventQueue;
+    FreeRTOS::Queue<Events, EventQueueLength> m_eventQueue;
     State *m_currentState;
     BCDWatch *m_watch;
 };

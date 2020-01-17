@@ -8,7 +8,7 @@
 
 namespace Debug
 {
-    class Debug {
+    class Debug  {
     public:
         Debug(UART::SerialPort *port);
 

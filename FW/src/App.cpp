@@ -4,59 +4,50 @@
 #include "StateMachine.hpp"
 #include "DisplayTime.hpp"
 
+/**
+ * @brief Construct a new App object
+ * 
+ */
+App::App() : 
+    Task("App", Task::MediumPriority),
+    m_stateMachine(&m_watch, &States::DisplayTime::Instance),
+    m_watch(&m_eventQueue),
+    m_tickTimer(1, this) {}
 
-static BCDWatch Watch;
-static StateMachine AppStateMachine(&Watch, &States::DisplayTime::Instance);
 
+/**
+ * @brief Run application task
+ * 
+ */
 void App::Run() {
 
 #if DEBUG == 1
     System::System::Initialize(true);
-    Watch.Init(true);
+    m_watch.Init(true);
 #else
     System::System::Initialize();
     Watch.Init();
 #endif
 
-    AppStateMachine.Start();
+    m_stateMachine.Start();
+    m_tickTimer.Start();
+    m_watch.Button.Start();
 
-    Watch.Brightness = 128;
+    // TODO: put Accelerometer in a task as well
 
-    InitPeriod(1);
-
-    #if DEBUG == 1
-    uint32_t counter = 0;
-    #endif
+    m_watch.Brightness = 128;
 
     while(1) {
         Events event;
 
-        // Check button events
-        event = Watch.Button.Tick();
-        if(event) {
-            AppStateMachine.Event(event);
+        if(m_eventQueue.Dequeue(&event)) {
+            m_stateMachine.Event(event);
         }
-
-        // Check Accelerometer events
-        event = Watch.Accelerometer.Tick();
-        if(event) {
-            AppStateMachine.Event(event);
-        }
-
-        AppStateMachine.Event(Events::Tick);
-
-        #if DEBUG == 1
-        if(counter++ > 1000) {
-            Accelerometer::AccelerationVector vec;
-
-            Watch.Accelerometer.getAcceleration(vec);
-            Watch.Debug.Write(vec);
-            Watch.Debug.NewLine();
-
-            counter = 0;
-        }
-        #endif
-
-        EndPeriod();
     }
+}
+
+
+void App::Tick(FreeRTOS::Timer *timer) {
+    Events tick = Events::Tick;
+    m_eventQueue.Enqueue(&tick);
 }

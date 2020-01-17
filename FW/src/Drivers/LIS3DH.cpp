@@ -245,8 +245,6 @@ namespace Accelerometer
     }
    
     void LIS3DH::getAcceleration(AccelerationVector& vector) {
-        uint8_t data[6];
-
         vector.X = m_i2c->ReadReg<int16_t>(OUT_X_L | MULTI_BYTE_READ_ADDR_FLAG);
         vector.Y = m_i2c->ReadReg<int16_t>(OUT_Y_L | MULTI_BYTE_READ_ADDR_FLAG);
         vector.Z = m_i2c->ReadReg<int16_t>(OUT_Z_L | MULTI_BYTE_READ_ADDR_FLAG);

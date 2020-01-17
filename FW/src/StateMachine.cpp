@@ -7,8 +7,7 @@
  * @param watch Pointer to watch object, used by internal states
  * @param initialState Starting state for state machine
  */
-StateMachine::StateMachine(BCDWatch *watch, State *initialState) : Task("SM", 512, FreeRTOS::Task::MediumPriority),
-m_eventQueue(16)
+StateMachine::StateMachine(BCDWatch *watch, State *initialState) : Task("SM", Task::MediumPriority)
 {
     m_currentState = initialState;
     m_watch = watch;

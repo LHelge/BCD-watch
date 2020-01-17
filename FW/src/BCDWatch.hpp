@@ -2,7 +2,7 @@
 #define _BCDWATCH_HPP
 
 #include "GPIO.hpp"
-#include "Timer.hpp"
+#include "TMR.hpp"
 #include "Display.hpp"
 #include "I2C.hpp"
 #include "LIS3DH.hpp"
@@ -10,10 +10,12 @@
 #include "Debug.hpp"
 #include "RTC.hpp"
 #include "Button.hpp"
+#include "Queue.hpp"
+
 
 class BCDWatch {
 public:
-    BCDWatch();
+    BCDWatch(FreeRTOS::Queue<Events, EventQueueLength> *eventQueue);
 
     void Init(const bool debug = false);
 private:

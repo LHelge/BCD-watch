@@ -1,50 +1,53 @@
 #include "Button.hpp"
 
-#define BUTTONPRESS_LIMIT_LOW     (100)
-#define BUTTONPRESS_LIMIT_SHORT  (2000)
-#define BUTTONPRESS_LIMIT_LONG   (4000)
-#define BUTTONPRESS_LIMIT_HOLD   (5000)
-#define BUTTONHOLD_FREQUENCY      (100)  // Bad name, not frequency, timestep?
+#define BUTTONPRESS_LIMIT_LOW     (2)
+#define BUTTONPRESS_LIMIT_SHORT  (15)
+#define BUTTONPRESS_LIMIT_LONG   (25)
+#define BUTTONPRESS_LIMIT_HOLD   (50)
+
 
 namespace Button {
-    PushButton::PushButton(GPIO::Pin *pin) {
-        this->m_pin = pin;
-        this->m_timer = 0;
+    PushButton::PushButton(GPIO::Pin *pin, FreeRTOS::Queue<Events, EventQueueLength> *eventQueue) : 
+        Task("Btn", Task::LowPriority) 
+    {
+        m_pin = pin;
+        m_eventQueue = eventQueue;
     }
 
-    Events PushButton::Tick() {
-        if(this->m_pressed) {
-            this->m_timer++;
 
-            if(this->m_pin->Get()) {
-                // Button kept down
-                if( this->m_timer > BUTTONPRESS_LIMIT_HOLD &&
-                    this->m_timer % BUTTONHOLD_FREQUENCY == 0) {
-                    return Events::ButtonHold;
+    void PushButton::Run() {
+        InitPeriod(ButtonPeriodMilliseconds);
+
+        uint32_t downCounter = 0;
+        Events event = Events::None;
+        while(1) {
+            event = Events::None;
+            
+            if(m_pin->Get()) {
+                downCounter++;
+
+                if(downCounter > BUTTONPRESS_LIMIT_HOLD) {
+                    event = Events::ButtonHold;
+                    m_eventQueue->Enqueue(&event, 0);
                 }
             }
             else {
-                this->m_pressed = false;
-                // Button relesed
-                if(this->m_timer > BUTTONPRESS_LIMIT_LOW &&
-                   this->m_timer < BUTTONPRESS_LIMIT_SHORT) {
-                    return Events::ButtonPress;
+                if(downCounter > BUTTONPRESS_LIMIT_LOW && downCounter < BUTTONPRESS_LIMIT_SHORT) {
+                    event = Events::ButtonPress;
+                    m_eventQueue->Enqueue(&event, ButtonPeriodMilliseconds / 2);
                 }
-                else if(this->m_timer > BUTTONPRESS_LIMIT_SHORT && 
-                        this->m_timer < BUTTONPRESS_LIMIT_LONG) {
-                    return Events::ButtonLongPress;
+                else if(downCounter > BUTTONPRESS_LIMIT_LONG && downCounter < BUTTONPRESS_LIMIT_HOLD) {
+                    event = Events::ButtonLongPress;
+                    m_eventQueue->Enqueue(&event, ButtonPeriodMilliseconds / 2);
                 }
-            }
-        }
-        else {
-            if(this->m_pin->Get()) {
-                // Button down
-                this->m_pressed = true;
-                this->m_timer = 0;
-            }
-        }
 
-        return Events::None;
+                if(downCounter > 0)
+                    downCounter = 0;
+            }
+
+            EndPeriod();
+        }
     }
+
 
 }

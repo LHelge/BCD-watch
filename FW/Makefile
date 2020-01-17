@@ -64,7 +64,7 @@ src/HAL/GPIO.cpp \
 src/HAL/I2C.cpp \
 src/HAL/RTC.cpp \
 src/HAL/System.cpp \
-src/HAL/Timer.cpp \
+src/HAL/TMR.cpp \
 src/HAL/UART.cpp \
 src/Drivers/LIS3DH.cpp \
 src/Drivers/Display.cpp \

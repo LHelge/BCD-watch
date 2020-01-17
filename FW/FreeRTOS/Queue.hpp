@@ -7,11 +7,12 @@
 
 namespace FreeRTOS
 {
-    template<class T>
+    template<class T, size_t size>
     class Queue {
     public:
-        Queue(const uint16_t size) {
-            m_handle = xQueueCreate(size, sizeof(T));
+        Queue() {
+            //m_handle = xQueueCreate(size, sizeof(T));
+            m_handle = xQueueCreateStatic(size, sizeof(T), m_buffer, &m_staticQueue);
         }
 
         ~Queue() {
@@ -78,6 +79,8 @@ namespace FreeRTOS
 
     private:
         QueueHandle_t m_handle;
+        StaticQueue_t m_staticQueue;
+        uint8_t m_buffer[size * sizeof(T)];
     };
 } // namespace FreeRTOS
 

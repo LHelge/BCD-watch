@@ -42,7 +42,7 @@ extern "C" void Reset_Handler(void) {
     Application.Start();
 
     // Start FreeRTOS sceduler
-    FreeRTOS::Task::StartScheduler();
+    FreeRTOS::Task<0>::StartScheduler();
 
     // Should not get here
 

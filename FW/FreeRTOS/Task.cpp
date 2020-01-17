@@ -1,102 +1,58 @@
-#include "Task.hpp"
-#include "string.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 
-namespace FreeRTOS
-{
-    /**
-     * @brief Construct a new Task:: Task object
-     * 
-     * @param name Task name, will be truncated if longer than configMAX_TASK_LENGTH
-     * @param stackSize Stack size in bytes, rounded up to nearest sizeof(portSTACK_TYPE)
-     * @param priority Task priority
-     */
-    Task::Task(const char *name, const uint16_t stackSize, const UBaseType_t priority) {
-        strncpy(m_name, name, configMAX_TASK_NAME_LEN);
-        // strncpy() does not guarantee null-termination.
-        m_name[configMAX_TASK_NAME_LEN - 1] = '\0';
+extern "C" {
+    /* configSUPPORT_STATIC_ALLOCATION is set to 1, so the application must provide an
+    implementation of vApplicationGetIdleTaskMemory() to provide the memory that is
+    used by the Idle task. */
+    void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
+                                        StackType_t **ppxIdleTaskStackBuffer,
+                                        uint32_t *pulIdleTaskStackSize )
+    {
+        /* If the buffers to be provided to the Idle task are declared inside this
+        function then they must be declared static – otherwise they will be allocated on
+        the stack and so not exists after this function exits. */
+        static StaticTask_t xIdleTaskTCB;
+        static StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
 
-        // FreeRTOS takes stack size in words of length sizeof(portSTACK_TYPE)
-        // round up
-        m_stackSize = (configSTACK_DEPTH_TYPE)((stackSize + sizeof(portSTACK_TYPE) - 1) / sizeof(portSTACK_TYPE));
+        /* Pass out a pointer to the StaticTask_t structure in which the Idle task’s
+        state will be stored. */
+        *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;
 
-        m_priority = priority;
-        m_periodInitialized = false;
+        /* Pass out the array that will be used as the Idle task’s stack. */
+        *ppxIdleTaskStackBuffer = uxIdleTaskStack;
+
+        /* Pass out the size of the array pointed to by *ppxIdleTaskStackBuffer.
+        Note that, as the array is necessarily of type StackType_t,
+        configMINIMAL_STACK_SIZE is specified in words, not bytes. */
+        *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
     }
+    /*———————————————————–*/
 
+    /* configSUPPORT_STATIC_ALLOCATION and configUSE_TIMERS are both set to 1, so the
+    application must provide an implementation of vApplicationGetTimerTaskMemory()
+    to provide the memory that is used by the Timer service task. */
+    void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer,
+                                        StackType_t **ppxTimerTaskStackBuffer,
+                                        uint32_t *pulTimerTaskStackSize )
+    {
+        /* If the buffers to be provided to the Timer task are declared inside this
+        function then they must be declared static – otherwise they will be allocated on
+        the stack and so not exists after this function exits. */
+        static StaticTask_t xTimerTaskTCB;
+        static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
 
-    /**
-     * @brief Destroy the Task object
-     * 
-     */
-    Task::~Task() {
-        vTaskDelete(m_handle);
+        /* Pass out a pointer to the StaticTask_t structure in which the Timer
+        task’s state will be stored. */
+        *ppxTimerTaskTCBBuffer = &xTimerTaskTCB;
+
+        /* Pass out the array that will be used as the Timer task’s stack. */
+        *ppxTimerTaskStackBuffer = uxTimerTaskStack;
+
+        /* Pass out the size of the array pointed to by *ppxTimerTaskStackBuffer.
+        Note that, as the array is necessarily of type StackType_t,
+        configTIMER_TASK_STACK_DEPTH is specified in words, not bytes. */
+        *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
     }
-
-
-    /**
-     * @brief Start executing task.
-     * 
-     */
-    void Task::Start() {
-        xTaskCreate(Task::TaskFunction, m_name, m_stackSize, this, m_priority, &m_handle);
-    }
-
-
-    /**
-     * @brief Initialize a periodic delay, useful for having a periodic execution in task
-     *        Use EndPeriod() to wait for next period
-     * 
-     * @param milliseconds 
-     */
-    void Task::InitPeriod(uint32_t milliseconds) {
-        m_period = pdMS_TO_TICKS(milliseconds);
-        m_previousPeriod = xTaskGetTickCount();
-        m_periodInitialized = true;
-    }
-
-
-    /**
-     * @brief Wait until end of period
-     * 
-     */
-    void Task::EndPeriod() {
-        vTaskDelayUntil(&m_previousPeriod, m_period);
-    }
-
-
-    /**
-     * @brief Delay Task a specific number of milliseconds
-     * 
-     * @param milliseconds Number of milliseconds to delay
-     */
-    void Task::Delay(uint32_t milliseconds) {
-        TickType_t ticks = pdMS_TO_TICKS(milliseconds);
-        vTaskDelay(ticks);
-    }
-
-
-    /**
-     * @brief Wrapper function from FreeRTOS C API to C++
-     * 
-     * @param instance Instance of this task
-     */
-    void Task::TaskFunction(void *instance) {
-        Task *task = (Task*)instance;
-
-        task->Run();
-
-        vTaskDelete(task->m_handle);
-    }
-
-
-    /**
-     * @brief Start FreeRTOS scheduler. 
-     *        NOTE! This function shall never return under normal circumstances.
-     * 
-     */
-    void Task::StartScheduler() {
-        vTaskStartScheduler();
-    }
-
-} // namespace FreeRTOS
+}
