@@ -1,6 +1,6 @@
 #include "BCDWatch.hpp"
 
-BCDWatch::BCDWatch() :
+BCDWatch::BCDWatch(FreeRTOS::Queue<Events, EventQueueLength> *eventQueue) :
     LedS00(GPIO::Port::B, 10),
     LedS01(GPIO::Port::B,  1),
     LedS02(GPIO::Port::A,  7),
@@ -54,7 +54,7 @@ BCDWatch::BCDWatch() :
     Display(DispCols),
     Debug(&DbgSerial),
     Accelerometer(&AccelI2c, &Wake),
-    Button(&Wake) {
+    Button(&Wake, eventQueue) {
 
     ColS0Pins[0] = &LedS00;
     ColS0Pins[1] = &LedS01;

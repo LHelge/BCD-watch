@@ -4,45 +4,50 @@
 #include "StateMachine.hpp"
 #include "DisplayTime.hpp"
 
+/**
+ * @brief Construct a new App object
+ * 
+ */
+App::App() : 
+    Task("App", Task::MediumPriority),
+    m_stateMachine(&m_watch, &States::DisplayTime::Instance),
+    m_watch(&m_eventQueue),
+    m_tickTimer(1, this) {}
 
-static BCDWatch Watch;
-static StateMachine StateMachine(&Watch);
 
+/**
+ * @brief Run application task
+ * 
+ */
 void App::Run() {
 
 #if DEBUG == 1
     System::System::Initialize(true);
-    Watch.Init(true);
+    m_watch.Init(true);
 #else
     System::System::Initialize();
     Watch.Init();
 #endif
 
+    m_stateMachine.Start();
+    m_tickTimer.Start();
+    m_watch.Button.Start();
 
-    Watch.Brightness = 128;
+    // TODO: put Accelerometer in a task as well
 
-    // Starting state
-    StateMachine.ChangeState(&States::DisplayTime::Instance);
+    m_watch.Brightness = 128;
 
     while(1) {
-        StateMachine.HandleNextEvent();
+        Events event;
+
+        if(m_eventQueue.Dequeue(&event)) {
+            m_stateMachine.Event(event);
+        }
     }
 }
 
-void App::Tick() {
-    Events event;
 
-    // Check button events
-    event = Watch.Button.Tick();
-    if(event) {
-        StateMachine.Event(event);
-    }
-
-    // Check Accelerometer events
-    event = Watch.Accelerometer.Tick();
-    if(event) {
-        StateMachine.Event(event);
-    }
-
-    StateMachine.Event(Events::Tick);
+void App::Tick(FreeRTOS::Timer *timer) {
+    Events tick = Events::Tick;
+    m_eventQueue.Enqueue(&tick);
 }

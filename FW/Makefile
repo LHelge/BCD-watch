@@ -31,6 +31,13 @@ OPT = -O0
 # Build path
 BUILD_DIR = build
 
+
+#######################################
+# Includes
+#######################################
+include FreeRTOS/FreeRTOS.mk
+
+
 ######################################
 # source
 ######################################
@@ -43,7 +50,8 @@ Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rtc.c \
 Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_tim.c \
 Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usart.c \
 Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_utils.c \
-Drivers/CMSIS/Device/ST/STM32L0xx/Source/Templates/system_stm32l0xx.c  
+Drivers/CMSIS/Device/ST/STM32L0xx/Source/Templates/system_stm32l0xx.c \
+$(FREERTOS_C_SOURCES)
 
 CPP_SOURCES = \
 src/App.cpp \
@@ -56,14 +64,15 @@ src/HAL/GPIO.cpp \
 src/HAL/I2C.cpp \
 src/HAL/RTC.cpp \
 src/HAL/System.cpp \
-src/HAL/Timer.cpp \
+src/HAL/TMR.cpp \
 src/HAL/UART.cpp \
 src/Drivers/LIS3DH.cpp \
 src/Drivers/Display.cpp \
 src/Drivers/Button.cpp \
 src/States/DisplayTime.cpp \
 src/States/SetTime.cpp \
-src/States/Standby.cpp
+src/States/Standby.cpp \
+$(FREERTOS_CPP_SOURCES)
 
 # ASM sources
 ASM_SOURCES =  \
@@ -139,7 +148,8 @@ C_INCLUDES =  \
 -Isrc/States \
 -IDrivers/STM32L0xx_HAL_Driver/Inc \
 -IDrivers/CMSIS/Device/ST/STM32L0xx/Include \
--IDrivers/CMSIS/Include 
+-IDrivers/CMSIS/Include \
+$(addprefix -I, $(FREERTOS_INCLUDES))
 
 
 # compile gcc flags
@@ -168,7 +178,7 @@ LDSCRIPT = STM32L071CBTx_FLASH.ld
 # libraries
 LIBS = -lc -lm -lnosys 
 LIBDIR = 
-LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+LDFLAGS = $(MCU) -specs=nano.specs -specs=nosys.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
@@ -214,6 +224,17 @@ $(BUILD_DIR):
 #######################################
 clean:
 	-rm -fR $(BUILD_DIR)
+
+
+#######################################
+# OpenOCD stuff
+#######################################
+
+flash: all
+	openocd -f interface/stlink.cfg -f target/stm32l0.cfg -c "program $(BUILD_DIR)/$(TARGET).elf verify reset exit"
+
+reset:
+	openocd -f interface/stlink.cfg -f target/stm32l0.cfg -c "reset exit"
   
 #######################################
 # dependencies

@@ -1,5 +1,5 @@
-#ifndef _TIMER_HPP
-#define _TIMER_HPP
+#ifndef _TMR_HPP
+#define _TMR_HPP
 
 #include "stm32l0xx_ll_tim.h"
 

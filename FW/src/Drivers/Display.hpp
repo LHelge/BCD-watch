@@ -2,7 +2,7 @@
 #define _DISPLAY_HPP
 
 #include "GPIO.hpp"
-#include "Timer.hpp"
+#include "TMR.hpp"
 #include "RTC.hpp"
 
 namespace Display

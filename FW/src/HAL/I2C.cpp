@@ -29,7 +29,7 @@ namespace I2C {
         LL_I2C_Enable(this->m_i2c);
     }
 
-    void I2C::Transmit(const uint8_t address, const uint8_t *data, const uint8_t length) {
+    void I2C::Transmit(const uint8_t address, const uint8_t *data, const uint32_t length) {
         LL_I2C_HandleTransfer(this->m_i2c, address, LL_I2C_ADDRSLAVE_7BIT, length, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
         
         while(!LL_I2C_IsActiveFlag_STOP(this->m_i2c)) {
@@ -42,7 +42,7 @@ namespace I2C {
     }
 
 
-    void I2C::Receive(const uint8_t address, uint8_t *data, const uint8_t length) {
+    void I2C::Receive(const uint8_t address, uint8_t *data, const uint32_t length) {
         LL_I2C_HandleTransfer(this->m_i2c, address, LL_I2C_ADDRSLAVE_7BIT, length, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_READ);
 
         while(!LL_I2C_IsActiveFlag_STOP(this->m_i2c)) {
@@ -69,7 +69,7 @@ namespace I2C {
         this->m_i2c->Transmit(this->m_txAddr, data, 2);
     }
 
-    void I2CDevice::ReadReg(const uint8_t reg, uint8_t *data, const uint8_t length) {
+    void I2CDevice::ReadReg(const uint8_t reg, uint8_t *data, const uint32_t length) {
         data[0] = reg;
 
         this->m_i2c->Transmit(this->m_txAddr, data);

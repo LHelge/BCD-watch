@@ -2,6 +2,7 @@
 #define _I2C_HPP
 
 #include "stm32l0xx_ll_i2c.h"
+#include "stddef.h"
 
 namespace I2C {
 
@@ -15,8 +16,8 @@ namespace I2C {
 
         void Init();
 
-        void Transmit(const uint8_t address, const uint8_t *data, const uint8_t length = 1);
-        void Receive(const uint8_t address, uint8_t *data, const uint8_t length = 1);
+        void Transmit(const uint8_t address, const uint8_t *data, const uint32_t length = 1);
+        void Receive(const uint8_t address, uint8_t *data, const uint32_t length = 1);
 
     private:
         I2C_TypeDef *m_i2c;
@@ -38,6 +39,7 @@ namespace I2C {
         template<typename T>
         T ReadReg(uint8_t reg) {
             uint8_t byte_data[sizeof(T)];
+
             ReadReg(reg, byte_data, sizeof(T));
 
             T result = 0;

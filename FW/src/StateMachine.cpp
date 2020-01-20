@@ -1,68 +1,60 @@
 #include "StateMachine.hpp"
 
 
-StateMachine::StateMachine(BCDWatch *watch) {
-    this->m_watch = watch;
+/**
+ * @brief Construct a new State Machine object
+ * 
+ * @param watch Pointer to watch object, used by internal states
+ * @param initialState Starting state for state machine
+ */
+StateMachine::StateMachine(BCDWatch *watch, State *initialState) : Task("SM", Task::MediumPriority)
+{
+    m_currentState = initialState;
+    m_watch = watch;
 }
 
 
 void StateMachine::Event(Events event) {
-    this->m_eventQueue.Enqueue(event);
+    m_eventQueue.Enqueue(&event);
 }
 
-
-void StateMachine::HandleNextEvent() {
+/**
+ * @brief Run state machine task.
+ * 
+ */
+void StateMachine::Run() {
     Events event;
     State *nextState;
 
-    if(this->m_eventQueue.Dequeue(event)) {
-        switch (event) {
-            case Events::Tick:            nextState = this->m_currentState->Tick(this->m_watch); break;
-            case Events::ButtonPress:     nextState = this->m_currentState->ButtonPress(this->m_watch); break;
-            case Events::ButtonLongPress: nextState = this->m_currentState->ButtonLongPress(this->m_watch); break;
-            case Events::ButtonHold:      nextState = this->m_currentState->ButtonHold(this->m_watch); break;
-            default:                      nextState = this->m_currentState; break; // Not necessary
+    while (1)
+    {   
+        if(m_eventQueue.Dequeue(&event)) {
+            switch (event) {
+                case Events::Tick:              nextState = m_currentState->Tick(m_watch);              break;
+                case Events::ButtonPress:       nextState = m_currentState->ButtonPress(m_watch);       break;
+                case Events::ButtonLongPress:   nextState = m_currentState->ButtonLongPress(m_watch);   break;
+                case Events::ButtonHold:        nextState = m_currentState->ButtonHold(m_watch);        break;
+                default:                        nextState = m_currentState; break; // Not necessary
+            }
+            ChangeState(nextState);
         }
-        this->ChangeState(nextState);
     }
+    
 }
 
 
+/**
+ * @brief Change to a new state (or remain if current state is passed)
+ * 
+ * @param newState The state to change to
+ */
 void StateMachine::ChangeState(State *newState) {
-    if(this->m_currentState != newState && newState != nullptr) {
-        if(this->m_currentState != nullptr)  {
-            this->m_currentState->DeInit(this->m_watch);
+    if(m_currentState != newState && newState != nullptr) {
+        if(m_currentState != nullptr)  {
+            m_currentState->DeInit(m_watch);
         }
-        this->m_currentState = newState;
-        this->m_currentState->Init(this->m_watch);
+        m_currentState = newState;
+        m_currentState->Init(m_watch);
     }
 }
 
-
-StateMachine::EventQueue::EventQueue() {
-    this->m_head = this->m_queue;
-    this->m_tail = this->m_queue;
-}
-
-void StateMachine::EventQueue::Enqueue(Events event) {
-    *this->m_head++ = event;
-
-    if(this->m_head >= &this->m_queue[EVENT_QUEUE_LENGTH]) {
-        // Wrap
-        this->m_head = this->m_queue;
-    }
-}
-
-bool StateMachine::EventQueue::Dequeue(Events &event) {
-    if(this->m_head == this->m_tail) {
-        return false;
-    }
-
-    event = *this->m_tail++;
-
-    if(this->m_tail >= &this->m_queue[EVENT_QUEUE_LENGTH]) {
-        this->m_tail = this->m_queue;
-    }
-
-    return true;
-}
