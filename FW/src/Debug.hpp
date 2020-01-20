@@ -8,6 +8,17 @@
 
 namespace Debug
 {
+    enum Mode {
+        NormalMode = 0,
+        DebugMode
+    };
+
+#ifdef DEBUG
+    static const Mode MODE = DebugMode;
+#else  // DEBUG
+    static const Mode MODE = NormalMode;
+#endif  // DEBUG
+
     class Debug  {
     public:
         Debug(UART::SerialPort *port);

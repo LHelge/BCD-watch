@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "stm32l0xx_ll_pwr.h"
 
+#include "Debug.hpp"
+
 namespace System {
 
 
@@ -32,7 +34,7 @@ namespace System {
 
     class System {
     public:
-        static void Initialize(const bool debug = false);
+        static void Initialize(Debug::Mode debug = Debug::NormalMode);
         static void EnableClock(const ClockHW clock);
         static void Delay(const uint32_t milliseconds);
         static void Reset();

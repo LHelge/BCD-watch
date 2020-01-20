@@ -12,7 +12,7 @@ namespace System {
     volatile uint32_t System::m_delayCounter = 0;
     bool System::m_resumed = false;
 
-    void System::Initialize(const bool debug) {
+    void System::Initialize(Debug::Mode mode) {
         LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
 
         if(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1)
@@ -80,7 +80,7 @@ namespace System {
         LL_RCC_SetUSARTClockSource(LL_RCC_USART1_CLKSOURCE_PCLK2);
         LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_PCLK1);
 
-        if(debug) {
+        if(mode == Debug::DebugMode) {
             // In debug mode, keep SWD active in standby mode
             LL_DBGMCU_EnableDBGStandbyMode();
         }

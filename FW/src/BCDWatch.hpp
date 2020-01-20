@@ -12,12 +12,11 @@
 #include "Button.hpp"
 #include "Queue.hpp"
 
-
 class BCDWatch {
 public:
     BCDWatch(FreeRTOS::Queue<Events, EventQueueLength> *eventQueue);
 
-    void Init(const bool debug = false);
+    void Init(Debug::Mode mode = Debug::NormalMode);
 private:
     GPIO::Pin LedS00;
     GPIO::Pin LedS01;
