@@ -17,6 +17,13 @@ namespace FreeRTOS
     class Task {
     public:
 
+        enum TaskPriority : UBaseType_t {
+            IdlePriority = tskIDLE_PRIORITY,
+            LowPriority,
+            MediumPriority,
+            HighPriority
+        };
+
         /**
          * @brief Construct a new Task:: Task object
          * 
@@ -24,7 +31,7 @@ namespace FreeRTOS
          * @param stackSize Stack size in bytes, rounded up to nearest sizeof(portSTACK_TYPE)
          * @param priority Task priority
          */
-        Task(const char *name, UBaseType_t priority) {
+        Task(const char *name, TaskPriority priority) {
             // TODO: assert(stackSize % sizeof(StackType_t));
 
             strncpy(m_name, name, configMAX_TASK_NAME_LEN);
@@ -67,13 +74,6 @@ namespace FreeRTOS
         static void StartScheduler() {
             vTaskStartScheduler();
         }
-
-
-        // Four prio-levels should be enough for now
-        static constexpr UBaseType_t IdlePriority   = tskIDLE_PRIORITY;
-        static constexpr UBaseType_t LowPriority    = tskIDLE_PRIORITY + 1;
-        static constexpr UBaseType_t MediumPriority = tskIDLE_PRIORITY + 2;
-        static constexpr UBaseType_t HighPriority   = tskIDLE_PRIORITY + 3;
     protected:
 
         virtual void Init() {};

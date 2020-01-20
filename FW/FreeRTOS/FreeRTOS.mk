@@ -7,11 +7,11 @@ FreeRTOS/source/queue.c \
 FreeRTOS/source/stream_buffer.c \
 FreeRTOS/source/tasks.c \
 FreeRTOS/source/timers.c \
+FreeRTOS/Task.c
 #FreeRTOS/source/portable/MemMang/heap_2.c
 
 
 FREERTOS_CPP_SOURCES = \
-FreeRTOS/Task.cpp \
 FreeRTOS/Timer.cpp 
 
 
