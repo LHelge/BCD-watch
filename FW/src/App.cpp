@@ -21,13 +21,8 @@ App::App() :
  */
 void App::Run() {
 
-#if DEBUG == 1
-    System::System::Initialize(true);
-    m_watch.Init(true);
-#else
-    System::System::Initialize();
-    Watch.Init();
-#endif
+    System::System::Initialize(Debug::MODE);
+    m_watch.Init(Debug::MODE);
 
     m_stateMachine.Start();
     m_tickTimer.Start();

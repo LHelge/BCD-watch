@@ -91,7 +91,7 @@ BCDWatch::BCDWatch(FreeRTOS::Queue<Events, EventQueueLength> *eventQueue) :
     Brightness = 0xFF;
 }
 
-void BCDWatch::Init(const bool debug) {
+void BCDWatch::Init(Debug::Mode mode) {
     // Init all led pins as outputs
     LedS00.InitOutput();
     LedS01.InitOutput();
@@ -115,7 +115,7 @@ void BCDWatch::Init(const bool debug) {
     LedH03.InitOutput();
     LedH10.InitOutput();
     LedH11.InitOutput();
-    if(debug) {
+    if(mode == Debug::DebugMode) {
         LedH12_DTx.InitAlternate(0, GPIO::Type::PushPull, GPIO::Speed::VeryHigh);
         LedH13_DRx.InitAlternate(0, GPIO::Type::PushPull, GPIO::Speed::VeryHigh);
         DbgSerial.Init(115200);
