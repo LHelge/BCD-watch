@@ -2,7 +2,7 @@
 #define _FREERTOS_TASK_HPP 
 
 #include "FreeRTOS.h"
-#include "Task.h"
+#include "task.h"
 #include "string.h"
 
 namespace FreeRTOS
