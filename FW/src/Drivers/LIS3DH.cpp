@@ -1,7 +1,10 @@
 #include "LIS3DH.hpp"
+#include "Macros.hpp"
+
 
 namespace Accelerometer
 {
+
     // Memory registers of the accelerometer
     static const uint8_t STATUS_REG_AUX = 0x07;
     static const uint8_t OUT_ADC1_L = 0x08;
@@ -144,68 +147,99 @@ namespace Accelerometer
 
     static const uint8_t WhoAmI = 0b00110011;
 
-    LIS3DH::LIS3DH(I2C::I2CDevice *i2c, GPIO::Pin *intPin) {
-        this->m_i2c = i2c;
-        this->m_intPin = intPin;
-        this->m_initialized = false;
+    LIS3DH::LIS3DH(I2C::I2CDevice *i2c, GPIO::Pin *intPin, FreeRTOS::Queue<Events, EventQueueLength> *eventQueue) : 
+        Task("Acc", Task::TaskPriority::MediumPriority) {
+        m_i2c = i2c;
+        m_intPin = intPin;
+        m_initialized = false;
+        m_eventQueue = eventQueue;
     }
 
 
-    void LIS3DH::Init() {
+    void LIS3DH::Run() {
         uint8_t whoami;
 
-        this->m_i2c->ReadReg(WHO_AM_I, &whoami);
+       m_i2c->ReadReg(WHO_AM_I, &whoami);
 
-        if(whoami != WhoAmI) {
+        if (whoami != WhoAmI)
+        {
             // TODO: Assert
             return;
         }
-        else {
+        else
+        {
             // Read interrupt sources before resetting memory content
-            this->m_i2c->ReadReg(INT1_SRC, &this->m_int1Src);
-            this->m_i2c->ReadReg(INT2_SRC, &this->m_int2Src);
+           m_i2c->ReadReg(INT1_SRC, &this->m_int1Src);
+           m_i2c->ReadReg(INT2_SRC, &this->m_int2Src);
 
             // Reset control registers (if there was an interrupt)
-            this->m_i2c->WriteReg(CTRL_REG1, CTRL_REG1_RESET);
-            this->m_i2c->WriteReg(CTRL_REG2, CTRL_REG2_RESET);
-            this->m_i2c->WriteReg(CTRL_REG3, CTRL_REG3_RESET);
-            this->m_i2c->WriteReg(CTRL_REG4, CTRL_REG4_RESET);
-            this->m_i2c->WriteReg(CTRL_REG5, CTRL_REG5_RESET);
-            this->m_i2c->WriteReg(CTRL_REG6, CTRL_REG6_RESET);
+           m_i2c->WriteReg(CTRL_REG1, CTRL_REG1_RESET);
+           m_i2c->WriteReg(CTRL_REG2, CTRL_REG2_RESET);
+           m_i2c->WriteReg(CTRL_REG3, CTRL_REG3_RESET);
+           m_i2c->WriteReg(CTRL_REG4, CTRL_REG4_RESET);
+           m_i2c->WriteReg(CTRL_REG5, CTRL_REG5_RESET);
+           m_i2c->WriteReg(CTRL_REG6, CTRL_REG6_RESET);
         }
 
         // TODO: check these later
 
         // Low power mode @ 50 Hz, X, Y & Z enabled
-        this->m_i2c->WriteReg(CTRL_REG1, 
-            CTRL_REG1_ODR_50HZ | 
-            CTRL_REG1_LP_ENABLE |
-            CTRL_REG1_XYZ_ENABLE
-        );
+        m_i2c->WriteReg(CTRL_REG1, CTRL_REG1_ODR_10HZ |
+                                    CTRL_REG1_LP_ENABLE |
+                                    CTRL_REG1_XYZ_ENABLE);
+        m_i2c->WriteReg(CTRL_REG2, CTRL_REG2_RESET);
+        m_i2c->WriteReg(CTRL_REG3, CTRL_REG3_RESET);
+        m_i2c->WriteReg(CTRL_REG4, CTRL_REG4_HR);
+        m_i2c->WriteReg(CTRL_REG5, CTRL_REG5_RESET);
+        m_i2c->WriteReg(CTRL_REG6, CTRL_REG6_RESET);
 
-        this->m_i2c->WriteReg(CTRL_REG2,
-            CTRL_REG2_RESET
-        );
+        m_initialized = true;
 
-        this->m_i2c->WriteReg(CTRL_REG3,
-            CTRL_REG3_RESET
-        );
+     
+        InitPeriod(1000);
+        while(1) {
+            if (m_intPin->Get())
+            {
+                m_i2c->ReadReg(INT1_SRC, &m_int1Src);
+                m_i2c->ReadReg(INT2_SRC, &m_int2Src);
 
-        this->m_i2c->WriteReg(CTRL_REG4,
-            CTRL_REG4_RESET
-        );
+                // TODO: check for events.
 
-        this->m_i2c->WriteReg(CTRL_REG5,
-            CTRL_REG5_RESET
-        );
 
-        this->m_i2c->WriteReg(CTRL_REG6,
-            CTRL_REG6_RESET
-        );
+                
+            }
 
-        this->m_initialized = true;
+            AccelerationVector acc;
+
+            getAcceleration(acc);
+
+            Events event;
+            if(acc.Z < 0) {
+                if(ABS(acc.Y) < 1500) {
+                    if (acc.X < acc.Z) {
+                        event = Events::TiltLeft;
+                        m_eventQueue->Enqueue(&event);
+                    }
+                    else if (acc.X > -acc.Z) {
+                        event = Events::TiltRight;
+                        m_eventQueue->Enqueue(&event);
+                    }
+                }
+                if(ABS(acc.X) < 1500) {
+                    if (acc.Y < acc.Z) {
+                        event = Events::TiltUp;
+                        m_eventQueue->Enqueue(&event);
+                    }
+                    else if (acc.Y > -acc.Z) {
+                        event = Events::TiltDown;
+                        m_eventQueue->Enqueue(&event);
+                    }
+                }
+            }
+
+            EndPeriod();
+        }
     }
-
 
     void LIS3DH::ActivateWakeUpInterrupt() {
 
@@ -249,21 +283,6 @@ namespace Accelerometer
         vector.Y = m_i2c->ReadReg<int16_t>(OUT_Y_L | MULTI_BYTE_READ_ADDR_FLAG);
         vector.Z = m_i2c->ReadReg<int16_t>(OUT_Z_L | MULTI_BYTE_READ_ADDR_FLAG);
 
-    }
-
-    Events LIS3DH::Tick() {
-        if(this->m_initialized == false) {
-            return Events::None;
-        }
-
-        if(this->m_intPin->Get()) {
-            this->m_i2c->ReadReg(INT1_SRC, &this->m_int1Src);
-            this->m_i2c->ReadReg(INT2_SRC, &this->m_int2Src);
-
-            // TODO: check for events.
-        }
-
-        return Events::None;
     }
 
 

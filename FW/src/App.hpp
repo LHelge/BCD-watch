@@ -7,7 +7,7 @@
 #include "StateMachine.hpp"
 #include "Timer.hpp"
 
-class App : public FreeRTOS::Task<512>, public FreeRTOS::Ticker {
+class App : public FreeRTOS::Task<2048>, public FreeRTOS::Ticker {
 public:
     App();
     void Run() override;

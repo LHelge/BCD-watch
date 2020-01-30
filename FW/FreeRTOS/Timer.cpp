@@ -48,8 +48,12 @@ namespace FreeRTOS
 
         timer->m_ticker->Tick(timer);
 
-        if(--timer->m_counter == 0) {
-            timer->Stop();
+        if(timer->m_counter > 0) {
+            timer->m_counter--;
+
+            if(timer->m_counter == 0) {
+                timer->Stop();
+            }
         }
     }
 
