@@ -27,7 +27,7 @@ namespace UART {
         LL_USART_SetBaudRate(this->m_uart, System::System::GetCoreClock(), LL_USART_OVERSAMPLING_16, baudrate); 
         SET_BIT(this->m_uart->CR3, USART_CR3_OVRDIS);
 
-        NVIC_SetPriority(this->m_irqn, 0);  
+        NVIC_SetPriority(this->m_irqn, configLIBRARY_LOWEST_INTERRUPT_PRIORITY);
         NVIC_EnableIRQ(this->m_irqn);
 
         LL_USART_Enable(this->m_uart);

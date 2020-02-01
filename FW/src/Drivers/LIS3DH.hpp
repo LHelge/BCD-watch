@@ -4,6 +4,9 @@
 #include "I2C.hpp"
 #include "GPIO.hpp"
 #include "Events.hpp"
+#include "Task.hpp"
+#include "Queue.hpp"
+#include "Timer.hpp"
 
 namespace Accelerometer
 {
@@ -12,16 +15,15 @@ namespace Accelerometer
     };
 
 
-    class LIS3DH {
+    class LIS3DH : public FreeRTOS::Task<1024>  {
     public:
-        LIS3DH(I2C::I2CDevice *i2c, GPIO::Pin *intPin);
+        LIS3DH(I2C::I2CDevice *i2c, GPIO::Pin *intPin, FreeRTOS::Queue<Events, EventQueueLength> *eventQueue);
 
-        
-        void Init();
         void ActivateWakeUpInterrupt();
         void getAcceleration(AccelerationVector& vector);
-        Events Tick();
-        
+
+        void Run() override;
+
         static uint8_t getAddress(const bool sda);
     private:
         bool m_initialized;
@@ -29,6 +31,7 @@ namespace Accelerometer
         GPIO::Pin *m_intPin;
         uint8_t m_int1Src;
         uint8_t m_int2Src;
+        FreeRTOS::Queue<Events, EventQueueLength> *m_eventQueue;
     };
 } // namespace Accelerometer
 

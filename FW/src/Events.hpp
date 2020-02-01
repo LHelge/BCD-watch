@@ -8,7 +8,11 @@ enum Events : uint8_t {
     Tick,
     ButtonPress,
     ButtonLongPress,
-    ButtonHold
+    ButtonHold,
+    TiltLeft,
+    TiltRight,
+    TiltUp,
+    TiltDown
 };
 
 

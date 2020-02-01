@@ -35,3 +35,32 @@ State* State::ButtonHold(BCDWatch *watch) {
 
     return this;
 }
+
+
+State* State::TiltRight(BCDWatch *watch) {
+    // Nothing to do right now
+
+    return this;
+}
+
+
+State* State::TiltLeft(BCDWatch *watch) {
+    // Nothing to do right now
+
+    return this;
+}
+
+
+State* State::TiltUp(BCDWatch *watch) {
+    // Nothing to do right now
+
+    return this;
+}
+
+
+State* State::TiltDown(BCDWatch *watch) {
+    // Nothing to do right now
+
+    return this;
+}
+

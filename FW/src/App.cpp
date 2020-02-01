@@ -27,6 +27,7 @@ void App::Run() {
     m_stateMachine.Start();
     m_tickTimer.Start();
     m_watch.Button.Start();
+    m_watch.Accelerometer.Start();
 
     // TODO: put Accelerometer in a task as well
 

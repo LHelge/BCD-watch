@@ -146,6 +146,7 @@ C_INCLUDES =  \
 -Isrc/Drivers \
 -Isrc/HAL \
 -Isrc/States \
+-Isrc/Helpers \
 -IDrivers/STM32L0xx_HAL_Driver/Inc \
 -IDrivers/CMSIS/Device/ST/STM32L0xx/Include \
 -IDrivers/CMSIS/Include \

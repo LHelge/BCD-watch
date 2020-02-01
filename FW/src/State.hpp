@@ -15,6 +15,10 @@ public:
     virtual State* ButtonPress(BCDWatch *watch);
     virtual State* ButtonLongPress(BCDWatch *watch);
     virtual State* ButtonHold(BCDWatch *watch);
+    virtual State* TiltRight(BCDWatch *watch);
+    virtual State* TiltLeft(BCDWatch *watch);
+    virtual State* TiltUp(BCDWatch *watch);
+    virtual State* TiltDown(BCDWatch *watch);
 protected:
     uint32_t m_stateTime;
 };

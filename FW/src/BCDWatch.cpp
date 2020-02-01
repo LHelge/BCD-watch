@@ -53,7 +53,7 @@ BCDWatch::BCDWatch(FreeRTOS::Queue<Events, EventQueueLength> *eventQueue) :
     DbgSerial(UART::Number::UART1),
     Display(DispCols),
     Debug(&DbgSerial),
-    Accelerometer(&AccelI2c, &Wake),
+    Accelerometer(&AccelI2c, &Wake, eventQueue),
     Button(&Wake, eventQueue) {
 
     ColS0Pins[0] = &LedS00;
@@ -148,7 +148,6 @@ void BCDWatch::Init(Debug::Mode mode) {
     I2cScl.InitAlternate(6, GPIO::Type::OpenDrain, GPIO::Speed::VeryHigh);
     I2cSda.InitAlternate(6, GPIO::Type::OpenDrain, GPIO::Speed::VeryHigh);
     I2c.Init();
-    Accelerometer.Init();
 
     // prescalers for 32,768 Hz HSE
     Rtc.Init(127,255);

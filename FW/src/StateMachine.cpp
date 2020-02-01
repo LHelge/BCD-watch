@@ -34,9 +34,19 @@ void StateMachine::Run() {
                 case Events::ButtonPress:       nextState = m_currentState->ButtonPress(m_watch);       break;
                 case Events::ButtonLongPress:   nextState = m_currentState->ButtonLongPress(m_watch);   break;
                 case Events::ButtonHold:        nextState = m_currentState->ButtonHold(m_watch);        break;
+                case Events::TiltRight:         nextState = m_currentState->TiltRight(m_watch);         break;
+                case Events::TiltLeft:          nextState = m_currentState->TiltLeft(m_watch);          break;
+                case Events::TiltUp:            nextState = m_currentState->TiltUp(m_watch);            break;
+                case Events::TiltDown:          nextState = m_currentState->TiltDown(m_watch);          break;
                 default:                        nextState = m_currentState; break; // Not necessary
             }
             ChangeState(nextState);
+
+            if(event != Events::Tick) {
+                m_watch->Debug.Write("Event: ");
+                m_watch->Debug.Write(static_cast<uint8_t>(event));
+                m_watch->Debug.NewLine();
+            }
         }
     }
     
