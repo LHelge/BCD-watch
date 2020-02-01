@@ -169,8 +169,8 @@ namespace Accelerometer
         else
         {
             // Read interrupt sources before resetting memory content
-           m_i2c->ReadReg(INT1_SRC, &this->m_int1Src);
-           m_i2c->ReadReg(INT2_SRC, &this->m_int2Src);
+           m_i2c->ReadReg(INT1_SRC, &m_int1Src);
+           m_i2c->ReadReg(INT2_SRC, &m_int2Src);
 
             // Reset control registers (if there was an interrupt)
            m_i2c->WriteReg(CTRL_REG1, CTRL_REG1_RESET);
@@ -245,34 +245,34 @@ namespace Accelerometer
 
         // TODO: Select a better interrupt, perhaps click/doubleclick or 6D
 
-        this->m_i2c->WriteReg(CTRL_REG1, 
+        m_i2c->WriteReg(CTRL_REG1, 
             CTRL_REG1_ODR_10HZ | 
             CTRL_REG1_LP_ENABLE | 
             CTRL_REG1_X_ENABLE |
             CTRL_REG1_Y_ENABLE 
         );
 
-        this->m_i2c->WriteReg(CTRL_REG2, 0x00);
+        m_i2c->WriteReg(CTRL_REG2, 0x00);
 
-        this->m_i2c->WriteReg(CTRL_REG3, 
+        m_i2c->WriteReg(CTRL_REG3, 
             CTRL_REG3_I1_IA1
         );
 
-        this->m_i2c->WriteReg(CTRL_REG4, 0x00);
+        m_i2c->WriteReg(CTRL_REG4, 0x00);
 
         // Latch interrupt until SRC reg is read
-        this->m_i2c->WriteReg(CTRL_REG5,
+        m_i2c->WriteReg(CTRL_REG5,
             CTRL_REG5_LIR_INT1
         );
         
         // Threshold 
-        this->m_i2c->WriteReg(INT1_THS, 0x15);
+        m_i2c->WriteReg(INT1_THS, 0x15);
 
         // Duration instant
-        this->m_i2c->WriteReg(INT1_DURATION, 0);
+        m_i2c->WriteReg(INT1_DURATION, 0);
 
 
-        this->m_i2c->WriteReg(INT1_CFG,
+        m_i2c->WriteReg(INT1_CFG,
             INT1_CFG_XHIE |
             INT1_CFG_YHIE
         );

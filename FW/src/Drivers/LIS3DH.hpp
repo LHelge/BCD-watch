@@ -26,11 +26,6 @@ namespace Accelerometer
 
         static uint8_t getAddress(const bool sda);
     private:
-        enum Vectors {
-            X = 0,
-            Y,
-            Z
-        };
         bool m_initialized;
         I2C::I2CDevice *m_i2c;
         GPIO::Pin *m_intPin;
