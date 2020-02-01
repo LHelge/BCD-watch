@@ -1,5 +1,5 @@
 #include "LIS3DH.hpp"
-#include "Macros.hpp"
+#include "Math.hpp"
 
 
 namespace Accelerometer
@@ -215,7 +215,7 @@ namespace Accelerometer
 
             Events event;
             if(acc.Z < 0) {
-                if(ABS(acc.Y) < 1500) {
+                if(abs(acc.Y) < 1500) {
                     if (acc.X < acc.Z) {
                         event = Events::TiltLeft;
                         m_eventQueue->Enqueue(&event);
@@ -225,7 +225,7 @@ namespace Accelerometer
                         m_eventQueue->Enqueue(&event);
                     }
                 }
-                if(ABS(acc.X) < 1500) {
+                if(abs(acc.X) < 1500) {
                     if (acc.Y < acc.Z) {
                         event = Events::TiltUp;
                         m_eventQueue->Enqueue(&event);

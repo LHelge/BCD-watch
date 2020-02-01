@@ -54,7 +54,7 @@ T max(T x, T y) {
  */
 template<typename T>
 T clamp(T x, T min, T max) {
-    return min<T>(max<T(x, min), max);
+    return min(max(x, min), max);
 }
 
 #endif // _MATH_HPP
