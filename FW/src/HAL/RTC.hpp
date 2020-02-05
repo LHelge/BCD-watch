@@ -8,6 +8,11 @@
 namespace RealTimeClock {
     struct Time
     {
+        enum TickMode {
+            TICK_PROPAGATE,
+            TICK_ISOLATED
+        };
+
         Time() : H(0), M(0), S(0) {}
         Time(const uint8_t h, const uint8_t m, const uint8_t s) : H(h), M(m), S(s) {}
 
@@ -15,17 +20,21 @@ namespace RealTimeClock {
         uint8_t M;
         uint8_t S;
 
-        void TickS() {
+        void TickS(TickMode mode = TICK_PROPAGATE) {
             if(++S >= 60) {
                 S = 0;
-                TickM();
+                if (mode == TICK_PROPAGATE) {
+                    TickM();
+                }
             }
         }
 
-        void TickM() {
+        void TickM(TickMode mode = TICK_PROPAGATE) {
             if(++M >= 60) {
                 M = 0;
-                TickH();
+                if (mode == TICK_PROPAGATE) {
+                    TickH();
+                }
             }
         }
 
@@ -33,6 +42,14 @@ namespace RealTimeClock {
             if(++H >= 24) {
                 H = 0;
             }
+        }
+
+        bool operator==(const Time &t) {
+            return H == t.H && M == t.M && S == t.S;
+        }
+
+        bool operator!=(const Time &t) {
+            return !(*this == t);
         }
     };
 
