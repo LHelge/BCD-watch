@@ -7,6 +7,11 @@ namespace States {
 
     class SetTime : public State {    
     public:
+        enum Mode : uint8_t {
+            MODE_M,
+            MODE_H
+        };
+
         void Init(BCDWatch *watch) override;
         void DeInit(BCDWatch *watch) override;
         State* Tick(BCDWatch *watch) override;
@@ -16,6 +21,7 @@ namespace States {
 
         static SetTime Instance;
     private:
+        Mode m_mode;
         RealTimeClock::Time m_time;
         uint8_t m_dutycycle;
         int8_t m_dutycycleSign;

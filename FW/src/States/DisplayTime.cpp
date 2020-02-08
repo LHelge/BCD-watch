@@ -21,9 +21,9 @@ namespace States {
     State* DisplayTime::Tick(BCDWatch *watch) {
         State::Tick(watch);
 
-        // Set correct time
-        if(this->m_stateTime % 1000 == 0) {
-            this->m_time.TickS();
+        RealTimeClock::Time previous_time = m_time;
+        watch->Rtc.GetTime(this->m_time);
+        if (m_time != previous_time) {
             watch->Display.Set(this->m_time);
         }
 
